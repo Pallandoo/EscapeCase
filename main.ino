@@ -2,7 +2,7 @@
 #include <example-lib.h>
 
 // Global variables (can be used in anywhere in the program)
-int sensor = A0;
+int example-sensor = A0;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
