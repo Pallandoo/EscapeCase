@@ -3,9 +3,10 @@
 // All libraries needed to run this code 
 // #include <example-lib.h>
 
-//Voor de RFID sensor de volgende 2 includes
-#include <SPI.h>
-#include <MFRC522.h>
+//Voor de RFID sensor de volgende includes
+#include <SPI.h> // RC522 Module uses SPI protocol
+#include <MFRC522.h> // Library for Mifare RC522 Devices
+#include <EEPROM.h>  // We are going to read and write PICC's UIDs from/to EEPROM
 //TODO voor de Drukknoppen, schakelaars, keypad, oled display moeten de includes nog gevonden worden
 
 
@@ -18,6 +19,10 @@ bool game2done = false;
 bool game3done = false;
 bool game4done = false;
 
+// Create MFRC522 instance(voor de RFID)
+#define SS_PIN 10
+#define RST_PIN 9
+MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 
 // the setup function runs once when you press reset or power the board
