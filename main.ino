@@ -38,6 +38,28 @@ uint8_t successRead;    // Variable integer to keep if we have Successful Read f
 // END RFID ///////////////
 //////////////////////////
 
+// keypad ///////////////
+//////////////////////// https://www.kiwi-electronics.nl/3x4-phone-style-matrix-keypad
+#include "Arduino.h"
+#include "Keypad.h"
+
+const byte ROWS = 4; //four rows
+const byte COLS = 3; //three columns
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+byte rowPins[ROWS] = {5, 6, 7, 8}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
+
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+// keypad ///////////////
+////////////////////////
+
+
+
 // the setup function runs once when you press reset or power the board
 void setup() {
     initRFID();
@@ -73,6 +95,11 @@ void gameSchakelaars() {
 void gameKeypad() {
 // Code and logic for the Game below
 // examples can be found here: WIP
+char key = keypad.getKey();
+  
+  if (key != NO_KEY){
+    Serial.println(key);
+  }
     
 // the function is currently "void" this means it doesnt return anyting to the main loop when it is run
 // We clould return the current score or progress in games this would mean the function becomes int or something like that
