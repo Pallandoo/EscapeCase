@@ -22,6 +22,15 @@ const int ButtonGroenPin = 13;
 const int ButtonRoodPin = 14;
 const int ButtonBlauwPin = 15;
 
+// 6 schajekaars spel set pins 
+// TODO verander de pinnen naar de werkelijkheid 
+const int Schakelaar1 = 16
+const int Schakelaar2 = 17
+const int Schakelaar3 = 18
+const int Schakelaar4 = 19
+const int Schakelaar5 = 20
+const int Schakelaar6 = 21
+
 // RFID //////////////////
 //////////////////////////
 // RFID includes
