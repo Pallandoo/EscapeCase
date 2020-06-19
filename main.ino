@@ -4,8 +4,6 @@
 // #include <example-lib.h>
 //TODO voor de Drukknoppen, schakelaars, keypad, oled display moeten de includes nog gevonden worden
 
-
-
 // Global variables (can be used in anywhere in the program)
 //int exampleSensor = A0;
 //int score = 0;
