@@ -14,6 +14,14 @@ bool game2done = false;
 bool game3done = false;
 bool game4done = false;
 
+// 5 knoppen spel set pins 
+// TODO verander de pinnen naar de werkelijkheid 
+const int ButtonZwartPin = 11;
+const int ButtonGeelPin = 12;
+const int ButtonGroenPin = 13;
+const int ButtonRoodPin = 14;
+const int ButtonBlauwPin = 15;
+
 // RFID //////////////////
 //////////////////////////
 // RFID includes
