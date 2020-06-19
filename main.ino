@@ -7,8 +7,8 @@
 
 
 // Global variables (can be used in anywhere in the program)
-int exampleSensor = A0;
-int score = 0;
+//int exampleSensor = A0;
+//int score = 0;
 bool game1done = false;
 bool game2done = false;
 bool game3done = false;
@@ -25,6 +25,15 @@ bool game4done = false;
 #define RST_PIN 9
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 // Set Led Pins (nummers zijn een voorbeeld moet vervangen worden door de daadwerkelijke pins )
+#define COMMON_ANODE
+#ifdef COMMON_ANODE
+#define LED_ON LOW
+#define LED_OFF HIGH
+#else
+#define LED_ON HIGH
+#define LED_OFF LOW
+#endif
+// Set Pins
 #define redLed 7   
 #define greenLed 6
 #define blueLed 5
@@ -38,7 +47,7 @@ uint8_t successRead;    // Variable integer to keep if we have Successful Read f
 // END RFID ///////////////
 //////////////////////////
 
-// keypad ///////////////
+// keypad ///////////////  install the following LIB first: Keypad Library for Arduino
 //////////////////////// https://www.kiwi-electronics.nl/3x4-phone-style-matrix-keypad
 #include "Arduino.h"
 #include "Keypad.h"
@@ -76,7 +85,7 @@ void loop() {
     gameKnoppen();
     timer();
     score();
-    display(;
+    display();
     wifi();
 }
     
@@ -226,9 +235,9 @@ void initRFID(){
   pinMode(greenLed, OUTPUT);
   pinMode(blueLed, OUTPUT);
   pinMode(wipeB, INPUT_PULLUP);   // Enable pin's pull up resistor
-  pinMode(relay, OUTPUT);
+  //pinMode(relay, OUTPUT);
   //Be careful how relay circuit behave on while resetting or power-cycling your Arduino
-  digitalWrite(relay, HIGH);    // Make sure door is locked
+  //digitalWrite(relay, HIGH);    // Make sure door is locked
   digitalWrite(redLed, LED_OFF);  // Make sure led is off
   digitalWrite(greenLed, LED_OFF);  // Make sure led is off
   digitalWrite(blueLed, LED_OFF); // Make sure led is off
@@ -316,9 +325,9 @@ void granted ( uint16_t setDelay) {
   digitalWrite(blueLed, LED_OFF);   // Turn off blue LED
   digitalWrite(redLed, LED_OFF);  // Turn off red LED
   digitalWrite(greenLed, LED_ON);   // Turn on green LED
-  digitalWrite(relay, LOW);     // Unlock door!
+  //digitalWrite(relay, LOW);     // Unlock door!
   delay(setDelay);          // Hold door lock open for given seconds
-  digitalWrite(relay, HIGH);    // Relock door
+  //digitalWrite(relay, HIGH);    // Relock door
   delay(1000);            // Hold green LED on for a second
 }
 
@@ -398,7 +407,7 @@ void normalModeOn () {
   digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
   digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
   digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
-  digitalWrite(relay, HIGH);    // Make sure Door is Locked
+  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
 }
 
 //////////////////////////////////////// Read an ID from EEPROM //////////////////////////////
