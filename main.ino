@@ -95,8 +95,8 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
     gameSchakelaars(); // Jeroen + Welmoet
-    gameKeypad(); // Jeroen
     gameRFID(); //Patrick
+    gameKeypad(); // Jeroen
     gameKnoppen(); // Jinhua + Welmoet
     timer(); // Patrick 
     score(); // Wie dat wil 
