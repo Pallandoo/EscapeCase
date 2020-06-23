@@ -20,7 +20,7 @@ const int ButtonGroenPin = 13;
 const int ButtonRoodPin = 14;
 const int ButtonBlauwPin = 15;
 
-// 6 schajekaars spel set pins 
+// 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
 const int Schakelaar1 = 16
 const int Schakelaar2 = 17
