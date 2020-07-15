@@ -14,7 +14,8 @@ void loop() {
   update_countdown()
 }
 
-void return_time_left() {
+int return_time_left() {
+  return M;
 }
 
 void start_countdown_timer() {
@@ -88,7 +89,9 @@ void update_countdown(){
 }
 
 void print_message_on_display() {
+  
 }
 
 void display(){
+  
 }
