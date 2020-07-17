@@ -94,14 +94,14 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-    gameSchakelaars();
-    gameKeypad();
-    gameRFID();
-    gameKnoppen();
-    timer();
-    score();
-    display();
-    wifi();
+    gameSchakelaars(); // Jeroen + Welmoet
+    gameRFID(); //Patrick
+    gameKeypad(); // Jeroen
+    gameKnoppen(); // Jinhua + Welmoet
+    timer(); // Patrick 
+    score(); // Wie dat wil 
+    display(); // Patrick
+    wifi(); // Optioneel
 }
     
 // Below the main functions of the escape case. Functions names can be changed..
