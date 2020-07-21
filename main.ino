@@ -22,12 +22,19 @@ const int ButtonBlauwPin = 15;
 
 // 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
-const int Schakelaar1 = 16
-const int Schakelaar2 = 17
-const int Schakelaar3 = 18
-const int Schakelaar4 = 19
-const int Schakelaar5 = 20
-const int Schakelaar6 = 21
+// Every switch needs to pins for both the ON options.
+const int Schakelaar1 = 22
+const int Schakelaar2 = 23
+const int Schakelaar3 = 24
+const int Schakelaar4 = 25
+const int Schakelaar5 = 26
+const int Schakelaar6 = 27
+const int Schakelaar7 = 28
+const int Schakelaar8 = 29
+const int Schakelaar9 = 30
+const int Schakelaar10 = 31
+const int Schakelaar11 = 32
+const int Schakelaar12 = 33
 
 // RFID //////////////////
 //////////////////////////
@@ -87,6 +94,7 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 // the setup function runs once when you press reset or power the board
 void setup() {
     initRFID();
+    initSwitches();
     // TODO setups for the other parts 
 
 
@@ -112,6 +120,9 @@ void gameSchakelaars() {
 
 // the function is currently "void" this means it doesnt return anyting to the main loop when it is run
 // We clould return the current score or progress in games this would mean the function becomes int or something like that
+    
+    // The middle pin of the switches should be connected to GND
+    
     bool game1done = true;
 
 }
@@ -333,6 +344,21 @@ void initRFID(){
   Serial.println(F("Everything is ready"));
   Serial.println(F("Waiting PICCs to be scanned"));
   cycleLeds();    // Everything ready lets give user some feedback by cycling leds
+}
+
+void initSwitches(){
+  pinMode(Schakelaar1, INPUT_PULLUP);
+  pinMode(Schakelaar2, INPUT_PULLUP);
+  pinMode(Schakelaar3, INPUT_PULLUP);
+  pinMode(Schakelaar4, INPUT_PULLUP);
+  pinMode(Schakelaar5, INPUT_PULLUP);
+  pinMode(Schakelaar6, INPUT_PULLUP);
+  pinMode(Schakelaar7, INPUT_PULLUP);
+  pinMode(Schakelaar8, INPUT_PULLUP);
+  pinMode(Schakelaar9, INPUT_PULLUP);
+  pinMode(Schakelaar10, INPUT_PULLUP);
+  pinMode(Schakelaar11, INPUT_PULLUP);
+  pinMode(Schakelaar12, INPUT_PULLUP);
 }
          
 /////////////////////////////////////////  Access Granted    ///////////////////////////////////
