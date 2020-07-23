@@ -22,6 +22,7 @@ const String TweedeGoedePas = "BBBBBBBB";  // UID tweede pas
 const String DerdeGoedePas  = "CCCCCCCC";  // UID derde pas
 const String VierdeGoedePas = "DDDDDDDD";  // UID vierde pas 
 const String VijfdeGoedePas = "EEEEEEEE";  // UID vijfde pas 
+bool game3done = false;
 
 String LaatsteVijfGelezenPassen[5] = {} ;
 
@@ -91,7 +92,10 @@ void getCardID() {
 
 
 void contorleerGoedeAntwoorden() {
-  
+  if (LaatsteVijfGelezenPassen[0] == EersteGoedePas && LaatsteVijfGelezenPassen[1] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[3] == VierdeGoedePas && LaatsteVijfGelezenPassen[4] == VijfdeGoedePas)
+
+  game3done = true;
+
 }
 
 
