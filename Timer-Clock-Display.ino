@@ -1,17 +1,34 @@
+#include <Wire.h> // Display lib
+#include <LiquidCrystal_I2C.h> //Display lib
+
 int S = 0; // count seconds 
 int M = 0; // count minutes
 int H = 1; // count hours
 bool gamestart = false ;
 
-void setup() {
-  // put your setup code here, to run once:
 
+LiquidCrystal_I2C lcd(0x20,20,4);  // set the LCD address to 0x20 for a 20 chars and 4 line display
+//LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
+
+
+void setup() {
+  lcd.init();  // initialize the lcd 
+  lcd.begin(); 
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Welkom bij de ADR")
+  lcd.setCursor(0,1);
+  lcd.print("Escape Case");
+  lcd.setCursor(0,2);
+  lcd.print("Klik op de knop om")
+  lcd.setCursor(0,3);
+  lcd.print("te beginnen ");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  start_countdown_timer()
-  update_countdown()
+  start_countdown_timer();
+  update_countdown();
 }
 
 int return_time_left() {
@@ -43,55 +60,47 @@ void update_countdown(){
      }
     if(H<0) { H=1; M=0; S=0; } if(M>9)
      {
-       //lcd.setCursor(7,1);
+       lcd.setCursor(7,1);
        Serial.print(M);
      }
     else
      {
-       //lcd.setCursor(7,1);
+       lcd.setCursor(7,1);
        Serial.print("0"); 
-       //lcd.setCursor(8,1);
+       lcd.setCursor(8,1);
        Serial.print(M);
-       //lcd.setCursor(9,1);
+       lcd.setCursor(9,1);
        Serial.print(":");
      }
     
     if(S>9)
      {
-       //lcd.setCursor(10,1);
+       lcd.setCursor(10,1);
        Serial.print(S);
      }
     else
      {
-       //lcd.setCursor(10,1);
+       lcd.setCursor(10,1);
        Serial.print("0"); 
-       //lcd.setCursor(11,1);
+       lcd.setCursor(11,1);
        Serial.print(S);
-       //lcd.setCursor(12,1);
+       lcd.setCursor(12,1);
        Serial.print(" ");
      }
     
     if(H>9)
      {
-       //lcd.setCursor(4,1);
+       lcd.setCursor(4,1);
        Serial.print (H);
      }
     else
      {
-       //lcd.setCursor(4,1);
+       lcd.setCursor(4,1);
        Serial.print("0"); 
-       //lcd.setCursor(5,1);
+       lcd.setCursor(5,1);
        Serial.print(H);
-       //lcd.setCursor(6,1);
+       lcd.setCursor(6,1);
        Serial.print(":");
      }
   }
-}
-
-void print_message_on_display() {
-  
-}
-
-void display(){
-  
 }
