@@ -50,7 +50,7 @@ void getCardID() {
 
     Serial.print("Gelezen kaart ID: ");
     Serial.println(cardIdRead);
-  if( LaatsteVijfGelezenPassen[i] != cardIdRead) {
+  if( LaatsteVijfGelezenPassen[0] != cardIdRead) {
       String temp = "";
       String temp2 = "";
       for (int i = 0; i < 5; i++) { // vervang de eerste string in de array en verschuif elke bestaande string op
@@ -88,6 +88,12 @@ void getCardID() {
     mfrc522.PICC_HaltA(); 
   }
 }
+
+
+void contorleerGoedeAntwoorden() {
+  
+}
+
 
 void setup() {
   Serial.begin(9600);   // Stel de seriële monitor in
