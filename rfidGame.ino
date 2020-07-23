@@ -1,4 +1,4 @@
- /* Pin layout:
+ /* Pin layout: RFID Game
  * -----------------------------------------------------------------------------------------
  *             MFRC522      Arduino       Arduino   Arduino    Arduino          Arduino
  *             Reader/PCD   Uno/101       Mega      Nano v3    Leonardo/Micro   Pro Micro
@@ -10,10 +10,8 @@
  * SPI MISO    MISO         12 / ICSP-1   50        D12        ICSP-1           14
  * SPI SCK     SCK          13 / ICSP-3   52        D13        ICSP-3           15
  */
-
 #include <SPI.h>                        // SPI lib
 #include <MFRC522.h>                    // MFRC522 lib
-
 const int pinRST =  9;                  // Reset pin
 const int pinSS =  10;                  // Serial data pin
 
@@ -22,16 +20,14 @@ const String TweedeGoedePas = "BBBBBBBB";  // UID tweede pas
 const String DerdeGoedePas  = "CCCCCCCC";  // UID derde pas
 const String VierdeGoedePas = "DDDDDDDD";  // UID vierde pas 
 const String VijfdeGoedePas = "EEEEEEEE";  // UID vijfde pas 
+String LaatsteVijfGelezenPassen[5] = {} ;
+MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
+// RFID Game
 bool game3done = false;
 
-String LaatsteVijfGelezenPassen[5] = {} ;
 
 
-MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
-
-// Lees het kaart ID uit
-void getCardID() {
-
+void LeesPasUIDuit() {
   // Als geen nieuwe kaart is gevonden EN
   // Als geen kaart data wordt gelezen
   // PICC = Proximity Integrated Circuit Card
@@ -91,7 +87,7 @@ void getCardID() {
 }
 
 
-void contorleerGoedeAntwoorden() {
+void controleerGoedeAntwoorden() {
   if (LaatsteVijfGelezenPassen[0] == EersteGoedePas && LaatsteVijfGelezenPassen[1] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[3] == VierdeGoedePas && LaatsteVijfGelezenPassen[4] == VijfdeGoedePas)
 
   game3done = true;
@@ -112,5 +108,6 @@ void setup() {
 }
 
 void loop() {
-  getCardID();
+  LeesPasUIDuit();
+  controleerGoedeAntwoorden();
 }
