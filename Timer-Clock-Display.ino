@@ -47,6 +47,7 @@ void update_countdown(){
   if (gamestart = true){  
     S--;
     delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
+    // https://www.forward.com.au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
     
     if(S<0)
      {
