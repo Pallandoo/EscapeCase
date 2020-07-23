@@ -1,9 +1,9 @@
 #include <Wire.h> // Display lib
 #include <LiquidCrystal_I2C.h> //Display lib
 
-int S = 0; // count seconds 
-int M = 0; // count minutes
-int H = 1; // count hours
+int S = 59; // count seconds 
+int M = 60; // count minutes
+//int H = 1; // count hours
 bool gamestart = false ;
 
 
@@ -46,61 +46,42 @@ void start_countdown_timer() {
 void update_countdown(){
   if (gamestart = true){  
     S--;
-    delay(1000);
+    delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
     
     if(S<0)
      {
        M--;
        S=59;
      }
-    if(M<0)
-     {
-       H--;
-       M=59;
-     }
-    if(H<0) { H=1; M=0; S=0; } if(M>9)
+    if(M<0){ // }
+    if(M>9)
      {
        lcd.setCursor(7,1);
-       Serial.print(M);
+       lcd.print(M);
      }
     else
      {
        lcd.setCursor(7,1);
-       Serial.print("0"); 
+       lcd.print("0"); 
        lcd.setCursor(8,1);
-       Serial.print(M);
+       lcd.print(M);
        lcd.setCursor(9,1);
-       Serial.print(":");
+       lcd.print(":");
      }
     
     if(S>9)
      {
        lcd.setCursor(10,1);
-       Serial.print(S);
+       lcd.print(S);
      }
     else
      {
        lcd.setCursor(10,1);
-       Serial.print("0"); 
+       lcd.print("0"); 
        lcd.setCursor(11,1);
-       Serial.print(S);
+       lcd.print(S);
        lcd.setCursor(12,1);
-       Serial.print(" ");
-     }
-    
-    if(H>9)
-     {
-       lcd.setCursor(4,1);
-       Serial.print (H);
-     }
-    else
-     {
-       lcd.setCursor(4,1);
-       Serial.print("0"); 
-       lcd.setCursor(5,1);
-       Serial.print(H);
-       lcd.setCursor(6,1);
-       Serial.print(":");
+       lcd.print(" ");
      }
   }
 }
