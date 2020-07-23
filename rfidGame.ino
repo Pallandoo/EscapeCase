@@ -1,4 +1,4 @@
- * Pin layout:
+ /* Pin layout:
  * -----------------------------------------------------------------------------------------
  *             MFRC522      Arduino       Arduino   Arduino    Arduino          Arduino
  *             Reader/PCD   Uno/101       Mega      Nano v3    Leonardo/Micro   Pro Micro
@@ -22,6 +22,8 @@ const String TweedeGoedePas = "BBBBBBBB";  // UID tweede pas
 const String DerdeGoedePas  = "CCCCCCCC";  // UID derde pas
 const String VierdeGoedePas = "DDDDDDDD";  // UID vierde pas 
 const String VijfdeGoedePas = "EEEEEEEE";  // UID vijfde pas 
+
+String LaatsteVijfGelezenPassen[5] = {} ;
 
 
 MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
@@ -48,21 +50,44 @@ void getCardID() {
 
     Serial.print("Gelezen kaart ID: ");
     Serial.println(cardIdRead);
-
-    // Als het cardID is toegestaan
-    if (cardIdRead == cardIdValid) {
-      Serial.println("Kaart toegestaan");
-    } else {
-      Serial.println("Kaart niet toegestaan");
+  if( LaatsteVijfGelezenPassen[i] != cardIdRead) {
+      String temp = "";
+      String temp2 = "";
+      for (int i = 0; i < 5; i++) { // vervang de eerste string in de array en verschuif elke bestaande string op
+        Serial.println(LaatsteVijfGelezenPassen[i]);
+        delay(500);    
+        if (i=0){
+          temp = LaatsteVijfGelezenPassen[0];
+          LaatsteVijfGelezenPassen[0] = cardIdRead;
+        }
+        if (i=1) {
+          temp2 = LaatsteVijfGelezenPassen[i];
+          LaatsteVijfGelezenPassen[i]= temp;
+          temp = "";
+        }
+        if (i=2) {
+          temp = LaatsteVijfGelezenPassen[i];
+          LaatsteVijfGelezenPassen[i]= temp2;
+          temp2 = "";
+        }
+        if (i=3) {
+          temp2 = LaatsteVijfGelezenPassen[i];
+          LaatsteVijfGelezenPassen[i]= temp;
+          temp = "";
+        }
+        if (i=4) {
+          temp = LaatsteVijfGelezenPassen[i];
+          LaatsteVijfGelezenPassen[i]= temp2;
+          temp2 = "";
+        }
+      }
     }
-
     Serial.println("");
 
     // Stop het lezen
     mfrc522.PICC_HaltA(); 
   }
 }
-
 
 void setup() {
   Serial.begin(9600);   // Stel de seriële monitor in
