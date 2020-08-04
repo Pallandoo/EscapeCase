@@ -3,6 +3,29 @@
 // #include <example-lib.h>
 //TODO voor de Drukknoppen, schakelaars, keypad, oled display moeten de includes nog gevonden worden
 
+//Used Pins:
+// Keypad puzzel -> 234567 (pin 8 from keypad not connected - grey wire)
+// Main Switch -> 8
+
+///////////////////////////
+// Keypad Lib 
+#include <Keypad.h>
+#define Password_Lenght 7 // 6 chars + NULL char (kepad puzzel)
+// Keypad Lib END 
+
+// Display Lib 
+#include <Wire.h> // Display lib
+#include <LiquidCrystal_I2C.h> //Display lib
+LiquidCrystal_I2C lcd(0x27,20,4); // <- Small LCD
+//LiquidCrystal_I2C lcd(0x26,20,4); // <- big LCD
+// Display Lib END 
+
+///////////////////////////
+// RFID Lib 
+#include <SPI.h>
+#include <MFRC522.h>
+// RFID Lib END 
+
 // Global variables (can be used in anywhere in the program)
 //int exampleSensor = A0;
 //int score = 0;
@@ -10,6 +33,9 @@ bool game1done = false;
 bool game2done = false;
 bool game3done = false;
 bool game4done = false;
+
+//Main Switch to start the game
+const int mainSwitch_pin = 9; // incl. led on top of the switch.
 
 // 5 knoppen spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
@@ -35,23 +61,9 @@ const int Schakelaar10 = 31;
 const int Schakelaar11 = 32;
 const int Schakelaar12 = 33;
 
- /* Pin layout: RFID Game
- * -----------------------------------------------------------------------------------------
- *             MFRC522      Arduino       Arduino   Arduino    Arduino          Arduino
- *             Reader/PCD   Uno/101       Mega      Nano v3    Leonardo/Micro   Pro Micro
- * Signal      Pin          Pin           Pin       Pin        Pin              Pin
- * -----------------------------------------------------------------------------------------
- * RST/Reset   RST          9             5         D9         RESET/ICSP-5     RST
- * SPI SS      SDA(SS)      10            53        D10        10               10
- * SPI MOSI    MOSI         11 / ICSP-4   51        D11        ICSP-4           16
- * SPI MISO    MISO         12 / ICSP-1   50        D12        ICSP-1           14
- * SPI SCK     SCK          13 / ICSP-3   52        D13        ICSP-3           15
- */
-#include <SPI.h>                        // SPI lib
-#include <MFRC522.h>                    // MFRC522 lib
-const int pinRST =  9;                  // Reset pin
-const int pinSS =  10;                  // Serial data pin
-
+// RFID 
+const int pinRST =  5;                  // Reset pin
+const int pinSS =  53;                  // Serial data pin
 const String EersteGoedePas = "AAAAAAAA";  // UID eerste pas 
 const String TweedeGoedePas = "BBBBBBBB";  // UID tweede pas 
 const String DerdeGoedePas  = "CCCCCCCC";  // UID derde pas
@@ -59,29 +71,22 @@ const String VierdeGoedePas = "DDDDDDDD";  // UID vierde pas
 const String VijfdeGoedePas = "EEEEEEEE";  // UID vijfde pas 
 String LaatsteVijfGelezenPassen[5] = {} ;
 MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
+
 // leds voor RFID
 // Set Led Pins (nummers zijn een voorbeeld moet vervangen worden door de daadwerkelijke pins )
-#define COMMON_ANODE
-#ifdef COMMON_ANODE
-#define LED_ON LOW
-#define LED_OFF HIGH
-#else
-#define LED_ON HIGH
-#define LED_OFF LOW
-#endif
-// Set Pins
-#define redLed 7   
-#define greenLed 6
-#define blueLed 5
+//#define COMMON_ANODE
+//#ifdef COMMON_ANODE
+//#define LED_ON LOW
+//#define LED_OFF HIGH
+//#else
+//#define LED_ON HIGH
+//#define LED_OFF LOW
+//#endif
+//// Set Pins
+//#define redLed 7   
+//#define greenLed 6
+//#define blueLed 5
 // END RFID Game
-
-///////////////////////////
-// Display Lib 
-#include <Wire.h> // Display lib
-#include <LiquidCrystal_I2C.h> //Display lib
-LiquidCrystal_I2C lcd(0x20,20,4);  // set the LCD address to 0x20 for a 20 chars and 4 line display
-//LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
-// Display Lib END 
 
 // countdown vars
 int S = 59; // count seconds 
@@ -91,11 +96,12 @@ bool gamestart = false ;
 // countdown vars END
 ////////////////////////////
 
-// keypad ///////////////  install the following LIB first: Keypad Library for Arduino
-//////////////////////// https://www.kiwi-electronics.nl/3x4-phone-style-matrix-keypad
-#include "Arduino.h"
-#include "Keypad.h"
-
+// keypad ///////////////
+char Data[Password_Lenght]; // 6 is the number of chars it can hold + the null char = 7
+char Master[Password_Lenght] = "123456"; //Keycode
+byte data_count = 0, master_count = 0;
+bool Pass_is_good;
+char customKey;
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
 char keys[ROWS][COLS] = {
@@ -106,34 +112,42 @@ char keys[ROWS][COLS] = {
 };
 byte rowPins[ROWS] = {5, 6, 7, 8}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
-
-Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
-// keypad ///////////////
-////////////////////////
-
-
+Keypad customKeypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+bool door = true;
+// keypad vars END
+////////////////////////////
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-    initLCD();
-    initRFID();
-    initSwitches();
+//    initLCD();
+//    initRFID();
+//    initSwitches();
+      initKeypad();
     // TODO setups for the other parts 
+}
 
-
+void initKeypad() {
+  lcd.init();
+  lcd.backlight();
+  lcd.begin(16, 2);
+  lcd.print(" Arduino Door");
+  lcd.setCursor(0, 1);
+  lcd.print("--Look project--");
+  delay(3000);
+  lcd.clear();
 }
 
 // the loop function runs over and over again forever
 void loop() {
-    start_countdown_timer(); // start de timer - Patrick
-    update_countdown(); // geef de timer weer op de LCD - Patric
-    gameSchakelaars(); // Jeroen + Welmoet
-    LeesPasUIDuit(); //RFID Game - Patrick
-    controleerGoedeAntwoorden();  //RFID Game - Patrick  
+//    start_countdown_timer(); // start de timer - Patrick
+//    update_countdown(); // geef de timer weer op de LCD - Patric
+//    gameSchakelaars(); // Jeroen + Welmoet
+//    LeesPasUIDuit(); //RFID Game - Patrick
+//    controleerGoedeAntwoorden();  //RFID Game - Patrick  
     gameKeypad(); // Jeroen
-    gameKnoppen(); // Jinhua + Welmoet
-    score(); // Wie dat wil 
-    wifi(); // Optioneel
+//    gameKnoppen(); // Jinhua + Welmoet
+//    score(); // Wie dat wil 
+//    wifi(); // Optioneel
 }
     
 // Below the main functions of the escape case. Functions names can be changed..
@@ -152,17 +166,21 @@ void gameSchakelaars() {
 }
 
 void gameKeypad() {
-// Code and logic for the Game below
-// examples can be found here: WIP
-char key = keypad.getKey();
-  
-  if (key != NO_KEY){
-    Serial.println(key);
+// Code and logic for the Game below -> cool
+  if (door == 0)
+  {
+    customKey = customKeypad.getKey();
+
+    if (customKey == '#')
+
+    {
+      lcd.clear();
+      lcd.print("  Door is close");
+      delay(3000);
+      door = 1;
+    }
   }
-    
-// the function is currently "void" this means it doesnt return anyting to the main loop when it is run
-// We clould return the current score or progress in games this would mean the function becomes int or something like that
-    bool game2done = true;
+  else Open();
 }
 
 void gameRFID() {
@@ -287,12 +305,12 @@ void initRFID(){
 }
 
 // Nog oude code verweken in nieuew code
-void normalModeOn () {
-  digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
-  digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
-  digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
-  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
-}
+//void normalModeOn () {
+//  digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
+//  digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
+//  digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
+//  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
+//}
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
 //////////////////////////////////////// Display and countdown /////////////////////////////
@@ -323,11 +341,54 @@ void start_countdown_timer() {
   //
 }
 
+void clearData()
+{
+  while (data_count != 0)
+  { // This can be used for any array size,
+    Data[data_count--] = 0; //clear array for new data
+  }
+  return;
+}
+
+void Open()
+{
+  lcd.setCursor(0, 0);
+  lcd.print(" Enter Password");
+  
+  customKey = customKeypad.getKey();
+  if (customKey) // makes sure a key is actually pressed, equal to (customKey != NO_KEY)
+  {
+    Data[data_count] = customKey; // store char into data array
+    lcd.setCursor(data_count, 1); // move cursor to show each new char
+    lcd.print(Data[data_count]); // print char at said cursor
+    data_count++; // increment data array by 1 to store new char, also keep track of the number of chars entered
+  }
+
+  if (data_count == Password_Lenght - 1) // if the array index is equal to the number of expected chars, compare data to master
+  {
+    if (!strcmp(Data, Master)) // equal to (strcmp(Data, Master) == 0)
+    {
+      lcd.clear();
+      lcd.print("  Door is Open");
+      door = 0;
+      game2done = true;
+    }
+    else
+    {
+      lcd.clear();
+      lcd.print("  Wrong Password");
+      delay(1000);
+      door = 1;
+    }
+    clearData();
+  }
+}
+
 void update_countdown(){
   if (gamestart = true){  
     S--;
     delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
-    // https://www.forward.com.au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
+    // https://www.forward.com.`au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
     
     if(S<0)
      {
