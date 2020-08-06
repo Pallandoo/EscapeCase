@@ -76,12 +76,14 @@ const int Schakelaar12 = 33;
 // RFID 
 const int pinRST =  5;                  // Reset pin
 const int pinSS =  53;                  // Serial data pin
-const String EersteGoedePas = "AAAAAAAA";  // UID eerste pas 
-const String TweedeGoedePas = "BBBBBBBB";  // UID tweede pas 
-const String DerdeGoedePas  = "CCCCCCCC";  // UID derde pas
-const String VierdeGoedePas = "DDDDDDDD";  // UID vierde pas 
-const String VijfdeGoedePas = "EEEEEEEE";  // UID vijfde pas 
+const String EersteGoedePas = "04325332295E80";  // UID eerste pas 
+const String TweedeGoedePas = "041BA032295E80";  // UID tweede pas 
+const String DerdeGoedePas  = "49186E8E";  // UID derde pas
+const String VierdeGoedePas = "04D75B32295E80";  // UID vierde pas 
+const String VijfdeGoedePas = "04238D32295E81";  // UID vijfde pas 
 String LaatsteVijfGelezenPassen[5] = {} ;
+
+
 MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
 
 // leds voor RFID
@@ -133,7 +135,7 @@ bool door = true;
 void setup() {
   Serial.begin(9600);
 //    initLCD();
-//    initRFID();
+      initRFID();
 //    initSwitches();
       initKeypad();
       initButtons();
@@ -166,8 +168,9 @@ void loop() {
 //    update_countdown(); // geef de timer weer op de LCD - Patric
 //    gameSchakelaars(); // Jeroen + Welmoet
 //    LeesPasUIDuit(); //RFID Game - Patrick
+      gameRFID();
 //    controleerGoedeAntwoorden();  //RFID Game - Patrick  
-    gameKeypad(); // Jeroen
+      gameKeypad(); // Jeroen
 //    gameKnoppen(); // Jinhua + Welmoet
 //    score(); // Wie dat wil 
 //    wifi(); // Optioneel
@@ -207,8 +210,8 @@ void gameKeypad() {
 }
 
 void gameRFID() {
-
-     bool game3done = true;
+     LeesPasUIDuit();
+     //bool game3done = true;
 }
 
 void gameKnoppen() {
@@ -324,18 +327,23 @@ void LeesPasUIDuit() {
     }
 
     cardIdRead.toUpperCase();
-
-    Serial.print("Gelezen kaart ID: ");
+    //Serial.print("Gelezen kaart ID: ");
     Serial.println(cardIdRead);
+    
+   // Serial.print(LaatsteVijfGelezenPassen[0]);
   if( LaatsteVijfGelezenPassen[0] != cardIdRead) {
       String temp = "";
       String temp2 = "";
       for (int i = 0; i < 5; i++) { // vervang de eerste string in de array en verschuif elke bestaande string op
-        Serial.println(LaatsteVijfGelezenPassen[i]);
-        delay(500);    
-        if (i=0){
-          temp = LaatsteVijfGelezenPassen[0];
+       Serial.println(i);
+       // Serial.println(LaatsteVijfGelezenPassen[i]);
+       // delay(500);    
+        if (i==0){
+          Serial.println("Nani");
           LaatsteVijfGelezenPassen[0] = cardIdRead;
+          temp = LaatsteVijfGelezenPassen[0];
+           
+          Serial.println(LaatsteVijfGelezenPassen[i]);
         }
         if (i=1) {
           temp2 = LaatsteVijfGelezenPassen[i];
@@ -359,15 +367,17 @@ void LeesPasUIDuit() {
         }
       }
     }
-    Serial.println("");
+    Serial.println(LaatsteVijfGelezenPassen[1]);
 
     // Stop het lezen
-    mfrc522.PICC_HaltA(); 
+    mfrc522.PICC_HaltA();
+    controleerGoedeAntwoorden(); 
   }
 }
 
 void controleerGoedeAntwoorden() {
   if (LaatsteVijfGelezenPassen[0] == EersteGoedePas && LaatsteVijfGelezenPassen[1] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[3] == VierdeGoedePas && LaatsteVijfGelezenPassen[4] == VijfdeGoedePas)
+  Serial.println("Done");
   game3done = true;
 }
 
@@ -377,7 +387,7 @@ void initRFID(){
 
   // Print MFRC522 Card Reader details naar seriële monitor
   mfrc522.PCD_DumpVersionToSerial();
-
+  LaatsteVijfGelezenPassen[0] = "Leeg";
   Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
 }
 
