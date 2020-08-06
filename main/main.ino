@@ -60,24 +60,24 @@ boolean win = false;
 // 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
 // Every switch needs to pins for both the ON options.
-const int Schakelaar1 = 22;
-const int Schakelaar2 = 23;
-const int Schakelaar3 = 24;
-const int Schakelaar4 = 25;
-const int Schakelaar5 = 26;
-const int Schakelaar6 = 27;
-const int Schakelaar7 = 28;
-const int Schakelaar8 = 29;
-const int Schakelaar9 = 30;
-const int Schakelaar10 = 31;
-const int Schakelaar11 = 32;
-const int Schakelaar12 = 33;
+const int Schakelaar1 = 28;
+const int Schakelaar2 = 29;
+const int Schakelaar3 = 30;
+const int Schakelaar4 = 31;
+const int Schakelaar5 = 32;
+const int Schakelaar6 = 33;
+const int Schakelaar7 = 34;
+const int Schakelaar8 = 35;
+const int Schakelaar9 = 36;
+const int Schakelaar10 = 37;
+const int Schakelaar11 = 38;
+const int Schakelaar12 = 39;
 
 // RFID 
 const int pinRST =  5;                  // Reset pin
 const int pinSS =  53;                  // Serial data pin
-const String EersteGoedePas = "04325332295E80";  // UID eerste pas 
-const String TweedeGoedePas = "041BA032295E80";  // UID tweede pas 
+const String EersteGoedePas = "041BA032295E80";  // UID eerste pas 
+const String TweedeGoedePas = "04325332295E80";  // UID tweede pas 
 const String DerdeGoedePas  = "49186E8E";  // UID derde pas
 const String VierdeGoedePas = "04D75B32295E80";  // UID vierde pas 
 const String VijfdeGoedePas = "04238D32295E81";  // UID vijfde pas 
@@ -339,33 +339,39 @@ void LeesPasUIDuit() {
        // Serial.println(LaatsteVijfGelezenPassen[i]);
        // delay(500);    
         if (i==0){
-          LaatsteVijfGelezenPassen[0] = cardIdRead;
-          temp = LaatsteVijfGelezenPassen[0];
+          temp = LaatsteVijfGelezenPassen[i];
+          LaatsteVijfGelezenPassen[i] = cardIdRead;
+          
           Serial.println(LaatsteVijfGelezenPassen[i]);
+          Serial.println(i);
         }
         if (i==1) {
           temp2 = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp;
           temp = "";
           Serial.println(LaatsteVijfGelezenPassen[i]);
+          Serial.println(i);
         }
         if (i==2) {
           temp = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp2;
           temp2 = "";
           Serial.println(LaatsteVijfGelezenPassen[i]);
+          Serial.println(i);
         }
         if (i==3) {
           temp2 = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp;
           temp = "";
           Serial.println(LaatsteVijfGelezenPassen[i]);
+          Serial.println(i);
         }
         if (i==4) {
-          temp = LaatsteVijfGelezenPassen[i];
+          //temp = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp2;
           temp2 = "";
           Serial.println(LaatsteVijfGelezenPassen[i]);
+          Serial.println(i);
         }
       }
     }
@@ -378,9 +384,12 @@ void LeesPasUIDuit() {
 }
 
 void controleerGoedeAntwoorden() {
-  if (LaatsteVijfGelezenPassen[0] == EersteGoedePas && LaatsteVijfGelezenPassen[1] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[3] == VierdeGoedePas && LaatsteVijfGelezenPassen[4] == VijfdeGoedePas)
-  Serial.println("Done");
-  game3done = true;
+  if (LaatsteVijfGelezenPassen[4] == EersteGoedePas && LaatsteVijfGelezenPassen[3] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[1] == VierdeGoedePas && LaatsteVijfGelezenPassen[0] == VijfdeGoedePas)
+  {
+      Serial.println("Done");
+  }
+  Serial.println("Aap");
+  //game3done = true;
 }
 
 void initRFID(){
