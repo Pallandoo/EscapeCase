@@ -6,6 +6,7 @@
 //Used Pins:
 // Keypad puzzel -> 234567 (pin 8 from keypad not connected - grey wire)
 // Main Switch -> 8
+// ButtonGame -> 22 tm 26
 
 ///////////////////////////
 // Keypad Lib 
@@ -38,12 +39,17 @@ bool game4done = false;
 const int mainSwitch_pin = 9; // incl. led on top of the switch.
 
 // 5 knoppen spel set pins 
-// TODO verander de pinnen naar de werkelijkheid 
-const int ButtonZwartPin = 11;
-const int ButtonGeelPin = 12;
-const int ButtonGroenPin = 13;
-const int ButtonRoodPin = 14;
-const int ButtonBlauwPin = 15;
+const int buttonRed = 22;
+const int buttonBlack = 23;
+const int buttonBlue = 24;
+const int buttonYellow = 25;
+const int buttonGreen = 26;
+
+int buttonRedState;
+int buttonBlackState;
+int buttonBlueState;
+int buttonYellowState;
+int buttonGreenState;
 
 // 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
@@ -119,10 +125,12 @@ bool door = true;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+  Serial.begin(9600);
 //    initLCD();
 //    initRFID();
 //    initSwitches();
       initKeypad();
+      initButtons();
     // TODO setups for the other parts 
 }
 
@@ -135,6 +143,15 @@ void initKeypad() {
   lcd.print("--Look project--");
   delay(3000);
   lcd.clear();
+}
+
+void initButtons() {
+  pinMode(buttonRed, INPUT);
+  pinMode(buttonBlack, INPUT);
+  pinMode(buttonBlue, INPUT);
+  pinMode(buttonYellow, INPUT);
+  pinMode(buttonGreen, INPUT);
+  answers.indexOf(target);
 }
 
 // the loop function runs over and over again forever
@@ -189,11 +206,65 @@ void gameRFID() {
 }
 
 void gameKnoppen() {
-// Code and logic for the Game below
-// examples can be found here: WIP
-
-// the function is currently "void" this means it doesnt return anyting to the main loop when it is run
-// We clould return the current score or progress in games this would mean the function becomes int or something like that
+  buttonRedState = digitalRead(buttonRed);
+  buttonBlackState = digitalRead(buttonBlack);
+  buttonBlueState = digitalRead(buttonBlue);
+  buttonYellowState = digitalRead(buttonYellow);
+  buttonGreenState = digitalRead(buttonGreen);
+  
+  if (buttonRedState == HIGH) 
+  {   
+     Serial.println(buttonRedState);
+     Serial.println("Button Red pressed"); // Print "Button 1 pressed" on Serial Monitor
+     answers = answers + '1';
+     delay(1000);
+  } 
+  if (buttonBlackState == HIGH) 
+  {   
+     Serial.println(buttonBlackState);
+     Serial.println("Button Black pressed"); // Print "Button 1 pressed" on Serial Monitor
+     answers = answers + '2';
+     delay(1000);
+  } 
+  if (buttonBlueState == HIGH) 
+  {   
+     Serial.println(buttonBlueState);
+     Serial.println("Button Blue pressed"); // Print "Button 1 pressed" on Serial Monitor
+     answers = answers + '3';
+     delay(1000);
+  } 
+  if (buttonYellowState == HIGH) 
+  {   
+     Serial.println(buttonYellowState);
+     Serial.println("Button Yellow pressed"); // Print "Button 1 pressed" on Serial Monitor
+     answers = answers + '4';
+     delay(1000);
+  } 
+  if (buttonGreenState == HIGH) 
+  {   
+     Serial.println(buttonGreenState);
+     Serial.println("Button Green pressed");
+     answers = answers + '5';
+     delay(1000);
+  } 
+  if (answers.indexOf(target) != -1)
+    {
+            Serial.println(answers.indexOf(target));
+            Serial.println("GEFELCITEERD");
+            digitalWrite(ledRed, LOW);
+            digitalWrite(ledGreen, HIGH);
+            answers="";
+            delay (1000);
+            digitalWrite(ledGreen, LOW);
+            win = true;
+            Serial.println(win);
+    }
+    else
+    {
+        digitalWrite(ledRed, HIGH);
+        win = false;
+    }
+    delay(1);        // delay in between reads for stability
     bool game4done = true;
 }
 
