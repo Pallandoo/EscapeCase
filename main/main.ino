@@ -59,21 +59,33 @@ String answers = "";
 String target = "12345"; // 1 = Red, 2 = Black, 3 = Blue, 4 = Yellow, 5 = Green.
 boolean win = false;
 
-// 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
 // Every switch needs to pins for both the ON options.
-const int Schakelaar1 = 28;
-const int Schakelaar2 = 29;
-const int Schakelaar3 = 30;
-const int Schakelaar4 = 31;
-const int Schakelaar5 = 32;
-const int Schakelaar6 = 33;
-const int Schakelaar7 = 34;
-const int Schakelaar8 = 35;
-const int Schakelaar9 = 36;
-const int Schakelaar10 = 37;
-const int Schakelaar11 = 38;
-const int Schakelaar12 = 39;
+const int eersteSchakelaarLaag = 38;
+const int eersteSchakelaarHoog = 39;
+const int tweedeSchakelaarLaag = 40;
+const int tweedeSchakelaarHoog = 41;
+const int derdeSchakelaarLaag = 42;
+const int derdeSchakelaarHoog = 43;
+const int vierdeSchakelaarLaag = 44;
+const int vierdeSchakelaarHoog = 45;
+const int vijfdeSchakelaarLaag = 46;
+const int vijfdeSchakelaarHoog = 47;
+const int zesdeSchakelaarLaag = 48;
+const int zesdeSchakelaarHoog = 49;
+// status van de schakelaars
+bool eersteSchakelaarLaagState;
+bool eersteSchakelaarHoogState;
+bool tweedeSchakelaarLaagState;
+bool tweedeSchakelaarHoogState;
+bool derdeSchakelaarLaagState;
+bool derdeSchakelaarHoogState;
+bool vierdeSchakelaarLaagState;
+bool vierdeSchakelaarHoogState;
+bool vijfdeSchakelaarLaagState;
+bool vijfdeSchakelaarHoogState;
+bool zesdeSchakelaarLaagState;
+bool zesdeSchakelaarHoogState;
 
 // RFID 
 const int pinRST =  5;                  // Reset pin
@@ -202,11 +214,22 @@ void loop() {
 // Below the main functions of the escape case. Functions names can be changed..
 
 void gameSchakelaars() { // eerste game
-   
-    // The middle pin of the switches should be connected to GND
+    eersteSchakelaarLaagState = digitalRead(eersteSchakelaarLaag);
+    eersteSchakelaarHoogState = digitalRead(eersteSchakelaarHoog);
+    tweedeSchakelaarLaagState = digitalRead(tweedeSchakelaarLaag);
+    tweedeSchakelaarHoogState= digitalRead(tweedeSchakelaarHoog);
+    derdeSchakelaarLaagState = digitalRead(derdeSchakelaarLaag);
+    derdeSchakelaarHoogState = digitalRead(derdeSchakelaarHoog);
+    vierdeSchakelaarLaagState = digitalRead(vierdeSchakelaarLaag);
+    vierdeSchakelaarHoogState = digitalRead(vierdeSchakelaarHoog);
+    vijfdeSchakelaarLaagState = digitalRead(vijfdeSchakelaarLaag);
+    vijfdeSchakelaarHoogState = digitalRead(vijfdeSchakelaarHoog);
+    zesdeSchakelaarLaagState = digitalRead(zesdeSchakelaarLaag);
+    zesdeSchakelaarHoogState= digitalRead(zesdeSchakelaarHoog);
     
+    // resultaten = L L M M H H  
+    // spel 1 klaar 
     game1done = true;
-
 }
 
 void gameKnoppen() { // tweede game
@@ -299,18 +322,18 @@ void score() {
 }
 
 void initSwitches(){
-  pinMode(Schakelaar1, INPUT_PULLUP);
-  pinMode(Schakelaar2, INPUT_PULLUP);
-  pinMode(Schakelaar3, INPUT_PULLUP);
-  pinMode(Schakelaar4, INPUT_PULLUP);
-  pinMode(Schakelaar5, INPUT_PULLUP);
-  pinMode(Schakelaar6, INPUT_PULLUP);
-  pinMode(Schakelaar7, INPUT_PULLUP);
-  pinMode(Schakelaar8, INPUT_PULLUP);
-  pinMode(Schakelaar9, INPUT_PULLUP);
-  pinMode(Schakelaar10, INPUT_PULLUP);
-  pinMode(Schakelaar11, INPUT_PULLUP);
-  pinMode(Schakelaar12, INPUT_PULLUP);
+  pinMode(eersteSchakelaarLaag, INPUT_PULLUP);
+  pinMode(eersteSchakelaarHoog, INPUT_PULLUP);
+  pinMode(tweedeSchakelaarLaag, INPUT_PULLUP);
+  pinMode(tweedeSchakelaarHoog, INPUT_PULLUP);
+  pinMode(derdeSchakelaarLaag, INPUT_PULLUP);
+  pinMode(derdeSchakelaarHoog, INPUT_PULLUP);
+  pinMode(vierdeSchakelaarLaag, INPUT_PULLUP);
+  pinMode(vierdeSchakelaarHoog, INPUT_PULLUP);
+  pinMode(vijfdeSchakelaarLaag, INPUT_PULLUP);
+  pinMode(vijfdeSchakelaarHoog, INPUT_PULLUP);
+  pinMode(zesdeSchakelaarLaag, INPUT_PULLUP);
+  pinMode(zesdeSchakelaarHoog, INPUT_PULLUP);
 }
          
 //////////////////////////////////////// RFID Game         //////////////////////////////////
