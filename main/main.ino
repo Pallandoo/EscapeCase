@@ -45,11 +45,17 @@ const int buttonBlue = 24;
 const int buttonYellow = 25;
 const int buttonGreen = 26;
 
+const int ledRed = 8;   // TODO: aanpassen op de juiste pin
+const int ledGreen = 7; // TODO: aanpassen op de juiste pin
+
 int buttonRedState;
 int buttonBlackState;
 int buttonBlueState;
 int buttonYellowState;
 int buttonGreenState;
+String answers = "";
+String target = "12345"; // 1 = Red, 2 = Black, 3 = Blue, 4 = Yellow, 5 = Green.
+boolean win = false;
 
 // 6 schakelaars spel set pins 
 // TODO verander de pinnen naar de werkelijkheid 
