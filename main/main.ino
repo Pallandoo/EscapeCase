@@ -139,6 +139,7 @@ void setup() {
       initKeypad();
       initButtons();
     // TODO setups for the other parts 
+      Serial.println("Gebruik de hoofdschakelaar om het spel te starten");
 }
 
 void initKeypad() {
@@ -164,7 +165,6 @@ void initButtons() {
 // the loop function runs over and over again forever
 void loop() {
       //Check of het spel al is begonnen
-       //Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
       mainSwitchState = digitalRead(mainSwitch);
       if (mainSwitchState == HIGH && gameStart == false) 
       {   
@@ -182,16 +182,19 @@ void loop() {
 
       if(gameStart == true){
         if(game1done == false && game2done == false && game3done == false && game4done == false ){
+          Serial.println("Start aan eerste spel");
           gameSchakelaars(); // eerste game
         }
         else if(game1done == true && game2done == false && game3done == false && game4done == false ){
+          Serial.println("Start aan tweede spel");
           gameKnoppen(); // tweede game
         }
         else if(game1done == true && game2done == true && game3done == false && game4done == false){
+          Serial.println("Start aan derde spel");
           gameRFID(); // derde game
-          Serial.println(return_time_left());
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == false ){
+          Serial.println("Start aan vierde spel");
           gameKeypad(); // vierde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true){
@@ -236,68 +239,50 @@ void gameSchakelaars() { // eerste game
     String zesdeSchakelaar = "";
 
     if (eersteSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       eersteSchakelaar = "L";
     } else if(eersteSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       eersteSchakelaar = "H";
     } else {
-      //Serial.print('M');
       eersteSchakelaar = "M";
     }
 
     if (tweedeSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       tweedeSchakelaar = "L";
     } else if(tweedeSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       tweedeSchakelaar = "H";
     } else {
-      //Serial.print('M');
       tweedeSchakelaar = "M";
     }
 
     if (derdeSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       derdeSchakelaar = "L";
     } else if(derdeSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       derdeSchakelaar = "H";
     } else {
-      //Serial.print('M');
       derdeSchakelaar = "M";
     }
   
     if (vierdeSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       vierdeSchakelaar = "L";
     } else if(vierdeSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       vierdeSchakelaar = "H";
     } else {
-      //Serial.print('M');
       vierdeSchakelaar = "M";
     }
 
     if (vijfdeSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       vijfdeSchakelaar = "L";
     } else if(vijfdeSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       vijfdeSchakelaar = "H";
     } else {
-      //Serial.print('M');
       vijfdeSchakelaar = "M";
     }
 
     if (zesdeSchakelaarLaagState == LOW){
-      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       zesdeSchakelaar = "L";
     } else if(zesdeSchakelaarHoogState == LOW) {
-      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       zesdeSchakelaar = "H";
     } else {
-      //Serial.print('M');
       zesdeSchakelaar = "M";
     }
 
@@ -352,7 +337,7 @@ void gameKnoppen() { // tweede game
   if (answers.indexOf(target) != -1)
     {
             Serial.println(answers.indexOf(target));
-            Serial.println("GEFELCITEERD");
+            Serial.println("GEFELCITEERD, tweede spel behaald");
             digitalWrite(ledRed, LOW);
             digitalWrite(ledGreen, HIGH);
             answers="";
@@ -438,9 +423,6 @@ void gameRFID() { // derde game
       String temp = "";
       String temp2 = "";
       for (int i = 0; i < 5; i++) { // vervang de eerste string in de array en verschuif elke bestaande string op
-       //Serial.println(i);
-       // Serial.println(LaatsteVijfGelezenPassen[i]);
-       // delay(500);    
         if (i==0){
           temp = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i] = cardIdRead;
@@ -478,7 +460,6 @@ void gameRFID() { // derde game
         }
       }
     }
-    //Serial.println(LaatsteVijfGelezenPassen[1]);
 
     // Stop het lezen
     mfrc522.PICC_HaltA();
@@ -491,8 +472,10 @@ void controleerGoedeAntwoorden() {
   {
       Serial.println("Gefeliciteerd derde spel behaald");
       game3done = true;
+  } else {
+    Serial.println("Fout");
   }
-  Serial.println("Fout");
+  
 }
 
 void initRFID(){
@@ -501,7 +484,6 @@ void initRFID(){
 
   // Print MFRC522 Card Reader details naar seriële monitor
   mfrc522.PCD_DumpVersionToSerial();
-  //LaatsteVijfGelezenPassen[0] = "Leeg";
   //Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
 }
 
@@ -574,13 +556,12 @@ void Open()
 void update_countdown(){
   if (gameStart = true){  
     S--;
-    //delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
-    // https://www.forward.com.au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
-    
     if(S<0)
      {
        M--;
        S=59;
+       Serial.println("Resterende tijd:");
+       Serial.println(M);
      }
     if(M<0){ // }
     if(M>9)
