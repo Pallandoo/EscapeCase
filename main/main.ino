@@ -61,18 +61,18 @@ boolean win = false;
 
 // TODO verander de pinnen naar de werkelijkheid 
 // Every switch needs to pins for both the ON options.
-const int eersteSchakelaarLaag = 38;
-const int eersteSchakelaarHoog = 39;
-const int tweedeSchakelaarLaag = 40;
-const int tweedeSchakelaarHoog = 41;
-const int derdeSchakelaarLaag = 42;
-const int derdeSchakelaarHoog = 43;
-const int vierdeSchakelaarLaag = 44;
-const int vierdeSchakelaarHoog = 45;
-const int vijfdeSchakelaarLaag = 46;
-const int vijfdeSchakelaarHoog = 47;
-const int zesdeSchakelaarLaag = 48;
-const int zesdeSchakelaarHoog = 49;
+const int eersteSchakelaarLaag = 28;
+const int eersteSchakelaarHoog = 29;
+const int tweedeSchakelaarLaag = 30;
+const int tweedeSchakelaarHoog = 31;
+const int derdeSchakelaarLaag = 32;
+const int derdeSchakelaarHoog = 33;
+const int vierdeSchakelaarLaag = 34;
+const int vierdeSchakelaarHoog = 35;
+const int vijfdeSchakelaarLaag = 36;
+const int vijfdeSchakelaarHoog = 37;
+const int zesdeSchakelaarLaag = 38;
+const int zesdeSchakelaarHoog = 39;
 // status van de schakelaars
 bool eersteSchakelaarLaagState;
 bool eersteSchakelaarHoogState;
