@@ -168,10 +168,33 @@ void loop() {
         vorigeTijd = huidigeTijd; 
       }
 
-      gameSchakelaars();
-      gameKnoppen();
-      gameRFID();
-      gameKeypad(); 
+      if(gameStart == true){
+        if(game1done == false && game2done == false && game3done == false && game4done == false ){
+          gameSchakelaars(); // eerste game
+        }
+        else if(game1done == true && game2done == false && game3done == false && game4done == false ){
+          gameKnoppen(); // tweede game
+        }
+        else if(game1done == true && game2done == true && game3done == false && game4done == false){
+          gameRFID(); // derde game
+        }
+        else if(game1done == true && game2done == true && game3done == true && game4done == false ){
+          gameKeypad(); // vierde game
+        }
+        else if(game1done == true && game2done == true && game3done == true && game4done == true){
+          Serial.println("Gefeliciteerd alle games zijn succesvol uitgespeeld");
+          //luik open voor het tekenen van de controleverklaring -> servo aan
+        }
+        else {
+          Serial.println("Leuk geprobeerd...");
+          Serial.println("Begin weer bij spel 1");
+          game1done = false;
+          game2done = false;
+          game3done = false;
+          game4done = false;
+        }
+      }
+      
 //    score(); // Wie dat wil 
 //    wifi(); // Optioneel
 }
