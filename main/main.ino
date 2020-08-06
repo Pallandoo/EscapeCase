@@ -328,46 +328,48 @@ void LeesPasUIDuit() {
 
     cardIdRead.toUpperCase();
     //Serial.print("Gelezen kaart ID: ");
-    Serial.println(cardIdRead);
+    //Serial.println(cardIdRead);
     
    // Serial.print(LaatsteVijfGelezenPassen[0]);
   if( LaatsteVijfGelezenPassen[0] != cardIdRead) {
       String temp = "";
       String temp2 = "";
       for (int i = 0; i < 5; i++) { // vervang de eerste string in de array en verschuif elke bestaande string op
-       Serial.println(i);
+       //Serial.println(i);
        // Serial.println(LaatsteVijfGelezenPassen[i]);
        // delay(500);    
         if (i==0){
-          Serial.println("Nani");
           LaatsteVijfGelezenPassen[0] = cardIdRead;
           temp = LaatsteVijfGelezenPassen[0];
-           
           Serial.println(LaatsteVijfGelezenPassen[i]);
         }
-        if (i=1) {
+        if (i==1) {
           temp2 = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp;
           temp = "";
+          Serial.println(LaatsteVijfGelezenPassen[i]);
         }
-        if (i=2) {
+        if (i==2) {
           temp = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp2;
           temp2 = "";
+          Serial.println(LaatsteVijfGelezenPassen[i]);
         }
-        if (i=3) {
+        if (i==3) {
           temp2 = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp;
           temp = "";
+          Serial.println(LaatsteVijfGelezenPassen[i]);
         }
-        if (i=4) {
+        if (i==4) {
           temp = LaatsteVijfGelezenPassen[i];
           LaatsteVijfGelezenPassen[i]= temp2;
           temp2 = "";
+          Serial.println(LaatsteVijfGelezenPassen[i]);
         }
       }
     }
-    Serial.println(LaatsteVijfGelezenPassen[1]);
+    //Serial.println(LaatsteVijfGelezenPassen[1]);
 
     // Stop het lezen
     mfrc522.PICC_HaltA();
@@ -387,7 +389,7 @@ void initRFID(){
 
   // Print MFRC522 Card Reader details naar seriële monitor
   mfrc522.PCD_DumpVersionToSerial();
-  LaatsteVijfGelezenPassen[0] = "Leeg";
+  //LaatsteVijfGelezenPassen[0] = "Leeg";
   Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
 }
 
