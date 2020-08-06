@@ -47,8 +47,8 @@ const int buttonBlue = 24;
 const int buttonYellow = 25;
 const int buttonGreen = 26;
 
-const int ledRed = 8;   // TODO: aanpassen op de juiste pin
-const int ledGreen = 7; // TODO: aanpassen op de juiste pin
+const int ledRed = 40;   // TODO: aanpassen op de juiste pin
+const int ledGreen = 41; // TODO: aanpassen op de juiste pin
 
 int buttonRedState;
 int buttonBlackState;
@@ -96,6 +96,9 @@ const String DerdeGoedePas  = "49186E8E";  // UID derde pas
 const String VierdeGoedePas = "04D75B32295E80";  // UID vierde pas 
 const String VijfdeGoedePas = "04238D32295E81";  // UID vijfde pas 
 String LaatsteVijfGelezenPassen[5] = {} ;
+const int ledRedRFID = 43;
+const int ledGreenRFID = 44;
+const int ledBlueRFID = 42;
 
 MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
 // END RFID Game
@@ -160,6 +163,8 @@ void initButtons() {
   pinMode(buttonYellow, INPUT);
   pinMode(buttonGreen, INPUT);
   answers.indexOf(target);
+  pinMode(ledGreen, OUTPUT);
+  pinMode(ledRed, OUTPUT);
 }
 
 // the loop function runs over and over again forever
@@ -402,14 +407,15 @@ void gameRFID() { // derde game
   // Als geen nieuwe kaart is gevonden EN
   // Als geen kaart data wordt gelezen
   // PICC = Proximity Integrated Circuit Card
+  digitalWrite(ledBlueRFID, LOW);
   if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
 
     String cardIdRead = "";
 
     // Er zijn kaarten met 4 of met 7 bytes. De bibliotheek ondersteund nog geen 7 bit adressen
     // dus we hoeven maar 4 bytes te doorlopen
+      digitalWrite(ledBlueRFID, HIGH);
     for (byte i = 0; i < mfrc522.uid.size; i++) {
-      // cardID[i] = mfrc522.uid.uidByte[i];
       cardIdRead.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? "0" : ""));
       cardIdRead.concat(String(mfrc522.uid.uidByte[i], HEX));
     }
@@ -472,7 +478,11 @@ void controleerGoedeAntwoorden() {
   {
       Serial.println("Gefeliciteerd derde spel behaald");
       game3done = true;
+      digitalWrite(ledRedRFID, LOW);
+      digitalWrite(ledGreenRFID, HIGH);
+      digitalWrite(ledBlueRFID, LOW);
   } else {
+    digitalWrite(ledRedRFID, HIGH);
     Serial.println("Fout");
   }
   
@@ -485,6 +495,9 @@ void initRFID(){
   // Print MFRC522 Card Reader details naar seriële monitor
   mfrc522.PCD_DumpVersionToSerial();
   //Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
+  pinMode(ledGreenRFID, OUTPUT);
+  pinMode(ledRedRFID, OUTPUT);
+  pinMode(ledBlueRFID, OUTPUT);
 }
 
 //////////////////////////////////////// RFID Game         //////////////////////////////////
@@ -537,7 +550,7 @@ void Open()
     if (!strcmp(Data, Master)) // equal to (strcmp(Data, Master) == 0)
     {
       lcd.clear();
-      lcd.print("  Door is Open");
+      lcd.print("  Gefeliciteerd!");
       door = 0;
       game4done = true;
       Serial.println("Nice");
