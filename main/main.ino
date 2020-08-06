@@ -34,9 +34,11 @@ bool game1done = false;
 bool game2done = false;
 bool game3done = false;
 bool game4done = false;
+bool gameStart = false ;
 
 //Main Switch to start the game
-const int mainSwitch_pin = 9; // incl. led on top of the switch.
+int mainSwitchState;
+const int mainSwitch = 9; // incl. led on top of the switch.
 
 // 5 knoppen spel set pins 
 const int buttonRed = 22;
@@ -83,30 +85,15 @@ const String VierdeGoedePas = "04D75B32295E80";  // UID vierde pas
 const String VijfdeGoedePas = "04238D32295E81";  // UID vijfde pas 
 String LaatsteVijfGelezenPassen[5] = {} ;
 
-
 MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRST
-
-// leds voor RFID
-// Set Led Pins (nummers zijn een voorbeeld moet vervangen worden door de daadwerkelijke pins )
-//#define COMMON_ANODE
-//#ifdef COMMON_ANODE
-//#define LED_ON LOW
-//#define LED_OFF HIGH
-//#else
-//#define LED_ON HIGH
-//#define LED_OFF LOW
-//#endif
-//// Set Pins
-//#define redLed 7   
-//#define greenLed 6
-//#define blueLed 5
 // END RFID Game
 
 // countdown vars
+const unsigned long seconde = 1000;
+unsigned long vorigeTijd = 0;
 int S = 59; // count seconds 
 int M = 60; // count minutes
 //int H = 1; // count hours
-bool gamestart = false ;
 // countdown vars END
 ////////////////////////////
 
@@ -164,57 +151,42 @@ void initButtons() {
 
 // the loop function runs over and over again forever
 void loop() {
-//    start_countdown_timer(); // start de timer - Patrick
-//    update_countdown(); // geef de timer weer op de LCD - Patric
-//    gameSchakelaars(); // Jeroen + Welmoet
-//    LeesPasUIDuit(); //RFID Game - Patrick
+      //Check of het spel al is begonnen
+      mainSwitchState = digitalRead(mainSwitch);
+      if (mainSwitchState == HIGH && gameStart == false) 
+      {   
+         Serial.println(mainSwitch);
+         Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
+         gameStart = true; 
+         delay(1000); // blokerende delay voor de arduino 
+      } 
+
+      // Ga elke seconde tellen zodat de countdown uiteindelijk goed uitgevoerd kan worden https://www.youtube.com/watch?v=BYKQ9rk0FEQ
+      unsigned long huidigeTijd = millis();
+      if(huidigeTijd - vorigeTijd >= seconde && gameStart == true) {
+        update_countdown();
+        vorigeTijd = huidigeTijd; 
+      }
+
+      gameSchakelaars();
+      gameKnoppen();
       gameRFID();
-//    controleerGoedeAntwoorden();  //RFID Game - Patrick  
-      gameKeypad(); // Jeroen
-//    gameKnoppen(); // Jinhua + Welmoet
+      gameKeypad(); 
 //    score(); // Wie dat wil 
 //    wifi(); // Optioneel
 }
     
 // Below the main functions of the escape case. Functions names can be changed..
 
-void gameSchakelaars() {
-// Code and logic for the Game below
-// examples can be found here: WIP
-
-// the function is currently "void" this means it doesnt return anyting to the main loop when it is run
-// We clould return the current score or progress in games this would mean the function becomes int or something like that
-    
+void gameSchakelaars() { // eerste game
+   
     // The middle pin of the switches should be connected to GND
     
-    bool game1done = true;
+    game1done = true;
 
 }
 
-void gameKeypad() {
-// Code and logic for the Game below -> cool
-  if (door == 0)
-  {
-    customKey = customKeypad.getKey();
-
-    if (customKey == '#')
-
-    {
-      lcd.clear();
-      lcd.print("  Door is close");
-      delay(3000);
-      door = 1;
-    }
-  }
-  else Open();
-}
-
-void gameRFID() {
-     LeesPasUIDuit();
-     //bool game3done = true;
-}
-
-void gameKnoppen() {
+void gameKnoppen() { // tweede game
   buttonRedState = digitalRead(buttonRed);
   buttonBlackState = digitalRead(buttonBlack);
   buttonBlueState = digitalRead(buttonBlue);
@@ -267,6 +239,7 @@ void gameKnoppen() {
             digitalWrite(ledGreen, LOW);
             win = true;
             Serial.println(win);
+            game2done = true; // tweede spel afgerond
     }
     else
     {
@@ -274,15 +247,24 @@ void gameKnoppen() {
         win = false;
     }
     delay(1);        // delay in between reads for stability
-    bool game4done = true;
 }
 
-void timer() {
-// WIP
-}
+void gameKeypad() { // vierde game
+// Code and logic for the Game below -> cool
+  if (door == 0)
+  {
+    customKey = customKeypad.getKey();
 
-void display() {
-// WIP
+    if (customKey == '#')
+
+    {
+      lcd.clear();
+      lcd.print("  Door is close");
+      delay(3000);
+      door = 1;
+    }
+  }
+  else Open();
 }
 
 void wifi() {
@@ -310,7 +292,7 @@ void initSwitches(){
          
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
-void LeesPasUIDuit() {
+void gameRFID() { // derde game
   // Als geen nieuwe kaart is gevonden EN
   // Als geen kaart data wordt gelezen
   // PICC = Proximity Integrated Circuit Card
@@ -386,10 +368,10 @@ void LeesPasUIDuit() {
 void controleerGoedeAntwoorden() {
   if (LaatsteVijfGelezenPassen[4] == EersteGoedePas && LaatsteVijfGelezenPassen[3] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[1] == VierdeGoedePas && LaatsteVijfGelezenPassen[0] == VijfdeGoedePas)
   {
-      Serial.println("Done");
+      Serial.println("Goed");
+      game3done = true;
   }
-  Serial.println("Aap");
-  //game3done = true;
+  Serial.println("Fout");
 }
 
 void initRFID(){
@@ -402,13 +384,6 @@ void initRFID(){
   Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
 }
 
-// Nog oude code verweken in nieuew code
-//void normalModeOn () {
-//  digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
-//  digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
-//  digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
-//  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
-//}
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
 //////////////////////////////////////// Display and countdown /////////////////////////////
@@ -429,14 +404,6 @@ void initLCD() {
 
 int return_time_left() {
   return M;
-}
-
-void start_countdown_timer() {
-  // code voor een knop of iets die ingedrukt wordt 
-  //if (startbuttonState == HIGH) {
-  //  gamestart = true ;
-  //}
-  //
 }
 
 void clearData()
@@ -483,10 +450,10 @@ void Open()
 }
 
 void update_countdown(){
-  if (gamestart = true){  
+  if (gameStart = true){  
     S--;
-    delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
-    // https://www.forward.com.`au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
+    //delay(1000); // momenteel blokkeerd deze delay alles even kijken of dit op een andere manier kan
+    // https://www.forward.com.au/pfod/ArduinoProgramming/TimingDelaysInArduino.html
     
     if(S<0)
      {
@@ -527,3 +494,22 @@ void update_countdown(){
   }
 }
 //////////////////////////////////////// END Display and countdown /////////////////////////////
+
+// oude code ////////////////////////////////////////////////////
+void start_game_escape_case() { // code in de main loop geplaatst
+//  mainSwitchState = digitalRead(mainSwitch);
+//  if (mainSwitchState == HIGH && gameStart == false) 
+//  {   
+//     Serial.println(mainSwitch);
+//     Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
+//     gameStart = true; 
+//     delay(1000); // blokerende delay voor de arduino 
+//  } 
+}
+
+void normalModeOn () { // Nog oude code verweken in nieuew code
+//  digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
+//  digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
+//  digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
+//  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
+}
