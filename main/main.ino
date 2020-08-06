@@ -227,9 +227,83 @@ void gameSchakelaars() { // eerste game
     zesdeSchakelaarLaagState = digitalRead(zesdeSchakelaarLaag);
     zesdeSchakelaarHoogState= digitalRead(zesdeSchakelaarHoog);
     
-    // resultaten = L L M M H H  
-    // spel 1 klaar 
-    game1done = true;
+    String eersteSchakelaar = "";
+    String tweedeSchakelaar = "";
+    String derdeSchakelaar = "";
+    String vierdeSchakelaar = "";
+    String vijfdeSchakelaar = "";
+    String zesdeSchakelaar = "";
+
+    if (eersteSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      eersteSchakelaar = "L";
+    } else if(eersteSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      eersteSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      eersteSchakelaar = "M";
+    }
+
+    if (tweedeSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      tweedeSchakelaar = "L";
+    } else if(tweedeSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      tweedeSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      tweedeSchakelaar = "M";
+    }
+
+    if (derdeSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      derdeSchakelaar = "L";
+    } else if(derdeSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      derdeSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      derdeSchakelaar = "M";
+    }
+  
+    if (vierdeSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      vierdeSchakelaar = "L";
+    } else if(vierdeSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      vierdeSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      vierdeSchakelaar = "M";
+    }
+
+    if (vijfdeSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      vijfdeSchakelaar = "L";
+    } else if(vijfdeSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      vijfdeSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      vijfdeSchakelaar = "M";
+    }
+
+    if (zesdeSchakelaarLaagState == LOW){
+      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      zesdeSchakelaar = "L";
+    } else if(zesdeSchakelaarHoogState == LOW) {
+      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      zesdeSchakelaar = "H";
+    } else {
+      Serial.print('M');
+      zesdeSchakelaar = "M";
+    }
+
+    if (eersteSchakelaar == "L" && tweedeSchakelaar == "L" && derdeSchakelaar == "M" && vierdeSchakelaar == "M" && vijfdeSchakelaar == "H" && zesdeSchakelaar == "H"){ // resultaten = L L M M H H  
+      Serial.println("Gefeliciteerd eerste spel behaald");
+      game1done = true;
+    }   
 }
 
 void gameKnoppen() { // tweede game
@@ -414,7 +488,7 @@ void gameRFID() { // derde game
 void controleerGoedeAntwoorden() {
   if (LaatsteVijfGelezenPassen[4] == EersteGoedePas && LaatsteVijfGelezenPassen[3] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[1] == VierdeGoedePas && LaatsteVijfGelezenPassen[0] == VijfdeGoedePas)
   {
-      Serial.println("Goed");
+      Serial.println("Gefeliciteerd derde spel behaald");
       game3done = true;
   }
   Serial.println("Fout");
