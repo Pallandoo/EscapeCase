@@ -38,7 +38,7 @@ bool gameStart = false ;
 
 //Main Switch to start the game
 int mainSwitchState;
-const int mainSwitch = 9; // incl. led on top of the switch.
+const int mainSwitch = 10; // incl. led on top of the switch.
 
 // 5 knoppen spel set pins 
 const int buttonRed = 22;
@@ -123,7 +123,7 @@ char keys[ROWS][COLS] = {
   {'7','8','9'},
   {'*','0','#'}
 };
-byte rowPins[ROWS] = {5, 6, 7, 8}; //connect to the row pinouts of the keypad
+byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
 Keypad customKeypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 bool door = true;
@@ -135,7 +135,7 @@ void setup() {
   Serial.begin(9600);
 //    initLCD();
       initRFID();
-//    initSwitches();
+      initSwitches();
       initKeypad();
       initButtons();
     // TODO setups for the other parts 
@@ -164,11 +164,11 @@ void initButtons() {
 // the loop function runs over and over again forever
 void loop() {
       //Check of het spel al is begonnen
+       //Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
       mainSwitchState = digitalRead(mainSwitch);
       if (mainSwitchState == HIGH && gameStart == false) 
       {   
-         Serial.println(mainSwitch);
-         Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
+         Serial.println("Spel is begonnen!");
          gameStart = true; 
          delay(1000); // blokerende delay voor de arduino 
       } 
@@ -189,6 +189,7 @@ void loop() {
         }
         else if(game1done == true && game2done == true && game3done == false && game4done == false){
           gameRFID(); // derde game
+          Serial.println(return_time_left());
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == false ){
           gameKeypad(); // vierde game
@@ -235,68 +236,68 @@ void gameSchakelaars() { // eerste game
     String zesdeSchakelaar = "";
 
     if (eersteSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       eersteSchakelaar = "L";
     } else if(eersteSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       eersteSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       eersteSchakelaar = "M";
     }
 
     if (tweedeSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       tweedeSchakelaar = "L";
     } else if(tweedeSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       tweedeSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       tweedeSchakelaar = "M";
     }
 
     if (derdeSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       derdeSchakelaar = "L";
     } else if(derdeSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       derdeSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       derdeSchakelaar = "M";
     }
   
     if (vierdeSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       vierdeSchakelaar = "L";
     } else if(vierdeSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       vierdeSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       vierdeSchakelaar = "M";
     }
 
     if (vijfdeSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       vijfdeSchakelaar = "L";
     } else if(vijfdeSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       vijfdeSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       vijfdeSchakelaar = "M";
     }
 
     if (zesdeSchakelaarLaagState == LOW){
-      Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
+      //Serial.print('L'); // checken of de schakelaar dan ook omhoog staat 
       zesdeSchakelaar = "L";
     } else if(zesdeSchakelaarHoogState == LOW) {
-      Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
+      //Serial.print('H'); // checken of de schakelaar dan ook omlaag staat 
       zesdeSchakelaar = "H";
     } else {
-      Serial.print('M');
+      //Serial.print('M');
       zesdeSchakelaar = "M";
     }
 
@@ -501,7 +502,7 @@ void initRFID(){
   // Print MFRC522 Card Reader details naar seriële monitor
   mfrc522.PCD_DumpVersionToSerial();
   //LaatsteVijfGelezenPassen[0] = "Leeg";
-  Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
+  //Serial.println("Houd kaart voor RFID scanner..."); // vervangen naar LCD 
 }
 
 //////////////////////////////////////// RFID Game         //////////////////////////////////
@@ -556,7 +557,8 @@ void Open()
       lcd.clear();
       lcd.print("  Door is Open");
       door = 0;
-      game2done = true;
+      game4done = true;
+      Serial.println("Nice");
     }
     else
     {
