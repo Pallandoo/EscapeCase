@@ -9,6 +9,13 @@
 // ButtonGame -> 22 tm 26
 
 ///////////////////////////
+// Servo Lib
+#include <Servo.h>
+Servo myservo;
+int mot_min = 90;   //min servo angle
+int mot_max = 180;  //Max servo angle
+
+///////////////////////////
 // Keypad Lib 
 #include <Keypad.h>
 #define Password_Lenght 7 // 6 chars + NULL char (kepad puzzel)
@@ -17,8 +24,8 @@
 // Display Lib 
 #include <Wire.h> // Display lib
 #include <LiquidCrystal_I2C.h> //Display lib
-LiquidCrystal_I2C lcd(0x27,20,4); // <- Small LCD
-//LiquidCrystal_I2C lcd(0x26,20,4); // <- big LCD
+LiquidCrystal_I2C lcd1(0x27,16,2); // <- Small LCD
+LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 // Display Lib END 
 
 ///////////////////////////
@@ -128,7 +135,7 @@ char keys[ROWS][COLS] = {
 };
 byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
-Keypad customKeypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+Keypad customKeypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 bool door = true;
 // keypad vars END
 ////////////////////////////
@@ -136,24 +143,26 @@ bool door = true;
 // the setup function runs once when you press reset or power the board
 void setup() {
   Serial.begin(9600);
-//    initLCD();
+      initLCD2();
       initRFID();
       initSwitches();
       initKeypad();
       initButtons();
+      myservo.attach(12); //Aansluiten op 12
+      myservo.write(mot_min); //dicht zetten 
     // TODO setups for the other parts 
       Serial.println("Gebruik de hoofdschakelaar om het spel te starten");
 }
 
 void initKeypad() {
-  lcd.init();
-  lcd.backlight();
-  lcd.begin(16, 2);
-  lcd.print(" Arduino Door");
-  lcd.setCursor(0, 1);
-  lcd.print("--Look project--");
+  lcd1.init();
+  lcd1.backlight();
+  lcd1.begin(16, 2);
+  lcd1.print(" Arduino Door");
+  lcd1.setCursor(0, 1);
+  lcd1.print("--Look project--");
   delay(3000);
-  lcd.clear();
+  lcd1.clear();
 }
 
 void initButtons() {
@@ -187,23 +196,23 @@ void loop() {
 
       if(gameStart == true){
         if(game1done == false && game2done == false && game3done == false && game4done == false ){
-          Serial.println("Start aan eerste spel");
+          //Serial.println("Start aan eerste spel");
           gameSchakelaars(); // eerste game
         }
         else if(game1done == true && game2done == false && game3done == false && game4done == false ){
-          Serial.println("Start aan tweede spel");
+          //Serial.println("Start aan tweede spel");
           gameKnoppen(); // tweede game
         }
         else if(game1done == true && game2done == true && game3done == false && game4done == false){
-          Serial.println("Start aan derde spel");
+          //Serial.println("Start aan derde spel");
           gameRFID(); // derde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == false ){
-          Serial.println("Start aan vierde spel");
+          //Serial.println("Start aan vierde spel");
           gameKeypad(); // vierde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true){
-          Serial.println("Gefeliciteerd alle games zijn succesvol uitgespeeld");
+          //Serial.println("Gefeliciteerd alle games zijn succesvol uitgespeeld");
           //luik open voor het tekenen van de controleverklaring -> servo aan
         }
         else {
@@ -369,8 +378,8 @@ void gameKeypad() { // vierde game
     if (customKey == '#')
 
     {
-      lcd.clear();
-      lcd.print("  Door is close");
+      lcd1.clear();
+      lcd1.print("  Door is close");
       delay(3000);
       door = 1;
     }
@@ -414,7 +423,9 @@ void gameRFID() { // derde game
 
     // Er zijn kaarten met 4 of met 7 bytes. De bibliotheek ondersteund nog geen 7 bit adressen
     // dus we hoeven maar 4 bytes te doorlopen
-      digitalWrite(ledBlueRFID, HIGH);
+    digitalWrite(ledBlueRFID, HIGH);
+    delay (1000);
+    digitalWrite(ledBlueRFID, LOW);
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       cardIdRead.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? "0" : ""));
       cardIdRead.concat(String(mfrc522.uid.uidByte[i], HEX));
@@ -481,6 +492,8 @@ void controleerGoedeAntwoorden() {
       digitalWrite(ledRedRFID, LOW);
       digitalWrite(ledGreenRFID, HIGH);
       digitalWrite(ledBlueRFID, LOW);
+      delay(4000);
+      digitalWrite(ledGreenRFID, LOW);
   } else {
     digitalWrite(ledRedRFID, HIGH);
     Serial.println("Fout");
@@ -503,19 +516,19 @@ void initRFID(){
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
 //////////////////////////////////////// Display and countdown /////////////////////////////
-void initLCD() {
-  lcd.init();  // initialize the lcd 
-  //lcd.begin(); 
-  lcd.backlight();
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Welkom bij de ADR");
-  lcd.setCursor(0,1);
-  lcd.print("Escape Case");
-  lcd.setCursor(0,2);
-  lcd.print("Klik op de knop om");
-  lcd.setCursor(0,3);
-  lcd.print("te beginnen ");
+void initLCD2() {
+  lcd2.init();  // initialize the lcd 
+  //lcd2.begin(); 
+  lcd2.backlight();
+  lcd2.clear();
+  lcd2.setCursor(0,0);
+  lcd2.print("Welkom bij de ADR");
+  lcd2.setCursor(0,1);
+  lcd2.print("Escape Case");
+  lcd2.setCursor(0,2);
+  lcd2.print("Klik op de knop om");
+  lcd2.setCursor(0,3);
+  lcd2.print("te beginnen ");
 }
 
 int return_time_left() {
@@ -533,15 +546,15 @@ void clearData()
 
 void Open()
 {
-  lcd.setCursor(0, 0);
-  lcd.print(" Enter Password");
+  lcd1.setCursor(0, 0);
+  lcd1.print(" Enter Password");
   
   customKey = customKeypad.getKey();
   if (customKey) // makes sure a key is actually pressed, equal to (customKey != NO_KEY)
   {
     Data[data_count] = customKey; // store char into data array
-    lcd.setCursor(data_count, 1); // move cursor to show each new char
-    lcd.print(Data[data_count]); // print char at said cursor
+    lcd1.setCursor(data_count, 1); // move cursor to show each new char
+    lcd1.print(Data[data_count]); // print char at said cursor
     data_count++; // increment data array by 1 to store new char, also keep track of the number of chars entered
   }
 
@@ -549,16 +562,18 @@ void Open()
   {
     if (!strcmp(Data, Master)) // equal to (strcmp(Data, Master) == 0)
     {
-      lcd.clear();
-      lcd.print("  Gefeliciteerd!");
+      myservo.write(mot_max);
+      lcd1.clear();
+      lcd1.print("  Gefeliciteerd!");
       door = 0;
       game4done = true;
-      Serial.println("Nice");
+      Serial.println("Spel 4 is behaald");
     }
     else
     {
-      lcd.clear();
-      lcd.print("  Wrong Password");
+      myservo.write(mot_min);
+      lcd1.clear();
+      lcd1.print("  Verkeerde Input");
       delay(1000);
       door = 1;
     }
@@ -579,32 +594,32 @@ void update_countdown(){
     if(M<0){ // }
     if(M>9)
      {
-       lcd.setCursor(7,1);
-       lcd.print(M);
+       lcd2.setCursor(7,1);
+       lcd2.print(M);
      }
     else
      {
-       lcd.setCursor(7,1);
-       lcd.print("0"); 
-       lcd.setCursor(8,1);
-       lcd.print(M);
-       lcd.setCursor(9,1);
-       lcd.print(":");
+       lcd2.setCursor(7,1);
+       lcd2.print("0"); 
+       lcd2.setCursor(8,1);
+       lcd2.print(M);
+       lcd2.setCursor(9,1);
+       lcd2.print(":");
      }
     
     if(S>9)
      {
-       lcd.setCursor(10,1);
-       lcd.print(S);
+       lcd2.setCursor(10,1);
+       lcd2.print(S);
      }
     else
      {
-       lcd.setCursor(10,1);
-       lcd.print("0"); 
-       lcd.setCursor(11,1);
-       lcd.print(S);
-       lcd.setCursor(12,1);
-       lcd.print(" ");
+       lcd2.setCursor(10,1);
+       lcd2.print("0"); 
+       lcd2.setCursor(11,1);
+       lcd2.print(S);
+       lcd2.setCursor(12,1);
+       lcd2.print(" ");
      }
     }
   }
