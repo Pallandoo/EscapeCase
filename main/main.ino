@@ -114,7 +114,7 @@ MFRC522 mfrc522(pinSS, pinRST);         // Instantieer MFRC522 op pinSS en pinRS
 const unsigned long seconde = 1000;
 unsigned long vorigeTijd = 0;
 int S = 59; // count seconds 
-int M = 60; // count minutes
+int M = 59; // count minutes
 //int H = 1; // count hours
 // countdown vars END
 ////////////////////////////
@@ -165,6 +165,22 @@ void initKeypad() {
   lcd1.clear();
 }
 
+void initLCD2() {
+  lcd2.init();  // initialize the lcd 
+  //lcd2.display();
+  lcd2.backlight();
+  lcd2.begin(20, 4); 
+  lcd2.clear();
+  lcd2.setCursor(0,0);
+  lcd2.print("Welkom bij de ADR");
+  lcd2.setCursor(0,1);
+  lcd2.print("Escape Case");
+  lcd2.setCursor(0,2);
+  lcd2.print("Klik op de knop om");
+  lcd2.setCursor(0,3);
+  lcd2.print("te beginnen ");
+}
+
 void initButtons() {
   pinMode(buttonRed, INPUT);
   pinMode(buttonBlack, INPUT);
@@ -180,10 +196,11 @@ void initButtons() {
 void loop() {
       //Check of het spel al is begonnen
       mainSwitchState = digitalRead(mainSwitch);
-      if (mainSwitchState == HIGH && gameStart == false) 
+      if (mainSwitchState == LOW && gameStart == false) //DIT MOET FALSE ZIJN
       {   
          Serial.println("Spel is begonnen!");
          gameStart = true; 
+         lcd2.clear();
          delay(1000); // blokerende delay voor de arduino 
       } 
 
@@ -516,20 +533,7 @@ void initRFID(){
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
 //////////////////////////////////////// Display and countdown /////////////////////////////
-void initLCD2() {
-  lcd2.init();  // initialize the lcd 
-  //lcd2.begin(); 
-  lcd2.backlight();
-  lcd2.clear();
-  lcd2.setCursor(0,0);
-  lcd2.print("Welkom bij de ADR");
-  lcd2.setCursor(0,1);
-  lcd2.print("Escape Case");
-  lcd2.setCursor(0,2);
-  lcd2.print("Klik op de knop om");
-  lcd2.setCursor(0,3);
-  lcd2.print("te beginnen ");
-}
+
 
 int return_time_left() {
   return M;
@@ -584,12 +588,34 @@ void Open()
 void update_countdown(){
   if (gameStart = true){  
     S--;
+       //lcd2.clear();
+       lcd2.setCursor(0,0);
+       lcd2.print(M);
+       lcd2.setCursor(2,0);
+       lcd2.print(":");  
+       lcd2.setCursor(3,0);
+       lcd2.print(S); 
+    if(S<10)
+    {
+      lcd2.setCursor(3,0);
+       lcd2.print("0");
+       lcd2.setCursor(0,0);
+       lcd2.print(M);
+       lcd2.setCursor(2,0);
+       lcd2.print(":");  
+       lcd2.setCursor(4,0);
+       lcd2.print(S); 
+    }
+    
     if(S<0)
      {
        M--;
        S=59;
        Serial.println("Resterende tijd:");
-       Serial.println(M);
+       Serial.println(M); 
+       lcd2.clear();
+       lcd2.setCursor(0,0);
+       lcd2.print(M);
      }
     if(M<0){ // }
     if(M>9)
