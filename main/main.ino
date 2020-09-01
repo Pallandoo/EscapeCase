@@ -198,9 +198,14 @@ void loop() {
       mainSwitchState = digitalRead(mainSwitch);
       if (mainSwitchState == LOW && gameStart == false) //DIT MOET FALSE ZIJN
       {   
+         lcd2.clear();
+         lcd2.setCursor(0,0);
+         lcd2.print(" -[ADR Escape Case]-");
+         lcd2.setCursor(0,1);
+         lcd2.print("Spel is begonnen!");
          Serial.println("Spel is begonnen!");
          gameStart = true; 
-         lcd2.clear();
+         
          delay(1000); // blokerende delay voor de arduino 
       } 
 
@@ -534,6 +539,18 @@ void initRFID(){
 
 //////////////////////////////////////// Display and countdown /////////////////////////////
 
+void clearLCDLine(int line, LiquidCrystal_I2C LCD, int size){
+ for(int n = 0; n < size; n++) {  // 20 indicates symbols in line. For 2x16 LCD write - 16
+   LCD.setCursor(n,line);
+   LCD.print(" ");
+ }
+// LCD.setCursor(0,line);             // set cursor in the beginning of deleted line
+}
+// voorbeeld code
+// clearLCDLine(4, lcd2, 20);
+// lcd2.print("Print iets hier ");
+
+
 
 int return_time_left() {
   return M;
@@ -589,67 +606,79 @@ void update_countdown(){
   if (gameStart = true){  
     S--;
        //lcd2.clear();
-       lcd2.setCursor(0,0);
-       lcd2.print(M);
-       lcd2.setCursor(2,0);
-       lcd2.print(":");  
-       lcd2.setCursor(3,0);
-       lcd2.print(S); 
-    if(S<10)
-    {
-      lcd2.setCursor(3,0);
-       lcd2.print("0");
-       lcd2.setCursor(0,0);
-       lcd2.print(M);
-       lcd2.setCursor(2,0);
-       lcd2.print(":");  
-       lcd2.setCursor(4,0);
-       lcd2.print(S); 
-    }
-    
+       lcd2.setCursor(0,3);
+       lcd2.print("15 maart over "); // 14 karakters lang 
+
+// onderste code verplaats zie andere if statements
+//       lcd2.setCursor(14,3);
+//       lcd2.print(M);
+//       lcd2.setCursor(16,3);
+//       lcd2.print(":");  
+//       lcd2.setCursor(17,3);
+//       lcd2.print(S); 
+       
+//    if(S<10) // Zie bestaande statement if(s>9){...}else{....}
+//    {
+//       lcd2.setCursor(14,3);
+//       lcd2.print(M);
+//       lcd2.setCursor(16,3);
+//       lcd2.print(":");  
+//       lcd2.setCursor(17,3);
+//       lcd2.print("0");
+//       lcd2.setCursor(18,3);
+//       lcd2.print(S); 
+//    }
+//  
+  
     if(S<0)
      {
        M--;
        S=59;
        Serial.println("Resterende tijd:");
        Serial.println(M); 
-       lcd2.clear();
-       lcd2.setCursor(0,0);
+       //lcd2.clear(); // vervangen door onderstaand
+       clearLCDLine(3, lcd2, 20); // wis alleen de 4 rij van het scherm
+       lcd2.setCursor(0,3);
+       lcd2.print("15 maart over "); // 14 karakters lang 
+       lcd2.setCursor(14,3);
        lcd2.print(M);
+       lcd2.setCursor(17,3);
+       lcd2.print(S); 
      }
-    if(M<0){ // }
+    if(M<0){ 
+       clearLCDLine(3, lcd2, 20);
+       lcd2.print("!!!De tijd is op!!!"); 
+    }
     if(M>9)
      {
-       lcd2.setCursor(7,1);
+       lcd2.setCursor(14,3);
        lcd2.print(M);
      }
     else
      {
-       lcd2.setCursor(7,1);
+       lcd2.setCursor(14,3);
        lcd2.print("0"); 
-       lcd2.setCursor(8,1);
+       lcd2.setCursor(15,3);
        lcd2.print(M);
-       lcd2.setCursor(9,1);
+       lcd2.setCursor(16,3);
        lcd2.print(":");
      }
     
     if(S>9)
      {
-       lcd2.setCursor(10,1);
+       lcd2.setCursor(17,3);
        lcd2.print(S);
      }
     else
      {
-       lcd2.setCursor(10,1);
+       lcd2.setCursor(17,3);
        lcd2.print("0"); 
-       lcd2.setCursor(11,1);
+       lcd2.setCursor(18,3);
        lcd2.print(S);
-       lcd2.setCursor(12,1);
-       lcd2.print(" ");
      }
     }
-  }
 }
+
 //////////////////////////////////////// END Display and countdown /////////////////////////////
 
 // oude code ////////////////////////////////////////////////////
