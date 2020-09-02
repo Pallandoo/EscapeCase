@@ -41,7 +41,8 @@ bool game1done = false;
 bool game2done = false;
 bool game3done = false;
 bool game4done = false;
-bool gameStart = false ;
+bool game5done = false;
+bool gameStart = false;
 
 //Main Switch to start the game
 int mainSwitchState;
@@ -217,25 +218,139 @@ void loop() {
       }
 
       if(gameStart == true){
-        if(game1done == false && game2done == false && game3done == false && game4done == false ){
-          //Serial.println("Start aan eerste spel");
+        // if toevoegen voor wanneer de mensen het spel niet uitspelen. 
+        //
+        if(M == 0 && game5done == false){ // Het spel is niet uitgespeeld
+              
+              clearLCDLine(1, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Helaas de tijd is op");
+              delay(5000); // 5 seconden delay blokkerend
+              clearLCDLine(1, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Noteer de score");
+              
+              if(game1done == false && game2done == false && game3done == false && game4done == false && game5done == false){
+                clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+                lcd2.setCursor(0,2);
+                lcd2.print("1:X 2:X 3:X 4:X 5:X");
+              }
+              else if(game1done == true && game2done == false && game3done == false && game4done == false && game5done == false){
+                
+                clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+                lcd2.setCursor(0,2);
+                lcd2.print("1:V 2:X 3:X 4:X 5:X");
+              }
+              else if(game1done == true && game2done == true && game3done == false && game4done == false && game5done == false){
+                clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+                lcd2.setCursor(0,2);
+                lcd2.print("1:V 2:V 3:X 4:X 5:X");
+              }
+              else if(game1done == true && game2done == true && game3done == true && game4done == false && game5done == false){
+                clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+                lcd2.setCursor(0,2);
+                lcd2.print("1:V 2:V 3:V 4:X 5:X");
+              }
+              else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == false){
+                clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+                lcd2.setCursor(0,2);
+                lcd2.print("1:V 2:V 3:V 4:V 5:X");
+              }
+        }
+        
+        if(game1done == false && game2done == false && game3done == false && game4done == false && game5done == false){
+          
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Game 1: Risico start");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("1:X 2:X 3:X 4:X 5:X");
+         
           gameSchakelaars(); // eerste game
         }
-        else if(game1done == true && game2done == false && game3done == false && game4done == false ){
-          //Serial.println("Start aan tweede spel");
-          gameKnoppen(); // tweede game
+        else if(game1done == true && game2done == false && game3done == false && game4done == false && game5done == false){
+          
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Game 2: fraude start");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("1:V 2:X 3:X 4:X 5:X");
+         
+          gameRFID(); // tweede game
         }
-        else if(game1done == true && game2done == true && game3done == false && game4done == false){
-          //Serial.println("Start aan derde spel");
-          gameRFID(); // derde game
+        else if(game1done == true && game2done == true && game3done == false && game4done == false && game5done == false){
+          
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Game 3: Hack");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("1:V 2:V 3:X 4:X 5:X");
+
+          // deze is nog niet af
+          // gameKeypadToetsen(); // derde game
+          game3done = true; // moet uiteindelijk verwerkt worden in bovenstaande functie
         }
-        else if(game1done == true && game2done == true && game3done == true && game4done == false ){
-          //Serial.println("Start aan vierde spel");
-          gameKeypad(); // vierde game
+        else if(game1done == true && game2done == true && game3done == true && game4done == false && game5done == false){
+          
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Game 4: GITC start");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("1:V 2:V 3:V 4:X 5:X");
+          
+          gameKnoppen(); // vierde game
         }
-        else if(game1done == true && game2done == true && game3done == true && game4done == true){
+        else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == false){
+          
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Game 5: NFI start");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("1:V 2:V 3:V 4:V 5:X");
+          
+          gameKeypad(); // vijfde game
           //Serial.println("Gefeliciteerd alle games zijn succesvol uitgespeeld");
           //luik open voor het tekenen van de controleverklaring -> servo aan
+          //toevoegen else if wanneer alle games klaar zijn waar de servo aangestuurd kan worden en tekst op het scherm komt en de timer pauzeert om de score te laten zien
+        }
+        else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == true){
+          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          lcd2.setCursor(0,1);
+          lcd2.print("Gefeliciteerd alle");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("zijn behaald!!!!!!");
+          delay(5000); // 5 seconden delay blokkerend
+          lcd2.setCursor(0,1);
+          lcd2.print("De countdown");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("is gestopt");
+          delay(5000); // 5 seconden delay blokkerend
+          lcd2.setCursor(0,1);
+          lcd2.print("De countdown");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("is gestopt");
+          delay(5000); // 5 seconden delay blokkerend
+          
+          // functie voor het openen van de servo
+          // openServo();
+          lcd2.setCursor(0,1);
+          lcd2.print("Luik open teken de");
+          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.setCursor(0,2);
+          lcd2.print("controleverklaring");
+          delay(5000); // 5 seconden delay blokkerend
+          
+          // Pauzeer timer en laat mensen de tijd opschrijven
+          lcd2.setCursor(0,1);
+          lcd2.print("noteer de eindtijd");
         }
         else {
           Serial.println("Leuk geprobeerd...");
@@ -244,6 +359,7 @@ void loop() {
           game2done = false;
           game3done = false;
           game4done = false;
+          game5done = false;
         }
       }
       
@@ -381,7 +497,7 @@ void gameKnoppen() { // tweede game
             digitalWrite(ledGreen, LOW);
             win = true;
             Serial.println(win);
-            game2done = true; // tweede spel afgerond
+            game4done = true; // tweede spel afgerond
     }
     else
     {
@@ -510,7 +626,7 @@ void controleerGoedeAntwoorden() {
   if (LaatsteVijfGelezenPassen[4] == EersteGoedePas && LaatsteVijfGelezenPassen[3] == TweedeGoedePas && LaatsteVijfGelezenPassen[2] == DerdeGoedePas && LaatsteVijfGelezenPassen[1] == VierdeGoedePas && LaatsteVijfGelezenPassen[0] == VijfdeGoedePas)
   {
       Serial.println("Gefeliciteerd derde spel behaald");
-      game3done = true;
+      game2done = true;
       digitalWrite(ledRedRFID, LOW);
       digitalWrite(ledGreenRFID, HIGH);
       digitalWrite(ledBlueRFID, LOW);
@@ -587,7 +703,7 @@ void Open()
       lcd1.clear();
       lcd1.print("  Gefeliciteerd!");
       door = 0;
-      game4done = true;
+      game5done = true;
       Serial.println("Spel 4 is behaald");
     }
     else
@@ -603,8 +719,8 @@ void Open()
 }
 
 void update_countdown(){
-  if (gameStart = true){  
-    S--;
+  if (gameStart = true && game5done == false){  
+       S--;
        //lcd2.clear();
        lcd2.setCursor(0,3);
        lcd2.print("15 maart over "); // 14 karakters lang 
@@ -645,9 +761,22 @@ void update_countdown(){
        lcd2.setCursor(17,3);
        lcd2.print(S); 
      }
-    if(M<0){ 
-       clearLCDLine(3, lcd2, 20);
-       lcd2.print("!!!De tijd is op!!!"); 
+    if(M == 0 && S == 0){ 
+       M=0; // zet de tijd stil 
+       S=0; // zet de tijd stil 
+       clearLCDLine(3, lcd2, 20); // wis alleen de 4 rij van het scherm
+       lcd2.setCursor(0,3);
+       lcd2.print("15 maart over ");
+       lcd2.setCursor(14,3);
+       lcd2.print("0");
+       lcd2.setCursor(15,3);
+       lcd2.print(M);
+       lcd2.setCursor(16,3);
+       lcd2.print(":");  
+       lcd2.setCursor(17,3);
+       lcd2.print("0");
+       lcd2.setCursor(18,3);
+       lcd2.print(S); 
     }
     if(M>9)
      {
@@ -676,6 +805,48 @@ void update_countdown(){
        lcd2.setCursor(18,3);
        lcd2.print(S);
      }
+    }else { // alle spellen zijn behaald stop de timer 
+        if(S<0)
+         {
+           S=59;
+           Serial.println("Resterende tijd:");
+           Serial.println(M); 
+           //lcd2.clear(); // vervangen door onderstaand
+           clearLCDLine(3, lcd2, 20); // wis alleen de 4 rij van het scherm
+           lcd2.setCursor(0,3);
+           lcd2.print("15 maart over "); // 14 karakters lang 
+           lcd2.setCursor(14,3);
+           lcd2.print(M);
+           lcd2.setCursor(17,3);
+           lcd2.print(S); 
+         }
+        if(M>9)
+         {
+           lcd2.setCursor(14,3);
+           lcd2.print(M);
+         }
+        else
+         {
+           lcd2.setCursor(14,3);
+           lcd2.print("0"); 
+           lcd2.setCursor(15,3);
+           lcd2.print(M);
+           lcd2.setCursor(16,3);
+           lcd2.print(":");
+         }
+        
+        if(S>9)
+         {
+           lcd2.setCursor(17,3);
+           lcd2.print(S);
+         }
+        else
+         {
+           lcd2.setCursor(17,3);
+           lcd2.print("0"); 
+           lcd2.setCursor(18,3);
+           lcd2.print(S);
+         }
     }
 }
 
