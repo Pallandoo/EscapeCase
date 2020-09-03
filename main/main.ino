@@ -8,6 +8,12 @@
 // Main Switch -> 8
 // ButtonGame -> 22 tm 26
 
+// do once bools
+bool loopGame1Once = false;
+bool loopGame2Once = false;
+bool loopGame3Once = false;
+bool loopGame4Once = false;
+bool loopGame5Once = false;
 ///////////////////////////
 // Servo Lib
 #include <Servo.h>
@@ -260,58 +266,74 @@ void loop() {
         
         if(game1done == false && game2done == false && game3done == false && game4done == false && game5done == false){
           
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
-          lcd2.setCursor(0,1);
-          lcd2.print("Game 1: Risico start");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("1:X 2:X 3:X 4:X 5:X");
+          if( loopGame1Once == false){
+              clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Game 1: Risico start");
+              clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,2);
+              lcd2.print("1:X 2:X 3:X 4:X 5:X");
+              loopGame1Once = true;
+          }
+
          
           gameSchakelaars(); // eerste game
         }
         else if(game1done == true && game2done == false && game3done == false && game4done == false && game5done == false){
-          
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
-          lcd2.setCursor(0,1);
-          lcd2.print("Game 2: fraude start");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("1:V 2:X 3:X 4:X 5:X");
-         
+
+          if( loopGame2Once == false){
+              clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Game 2: fraude start");
+              clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,2);
+              lcd2.print("1:V 2:X 3:X 4:X 5:X");
+              loopGame2Once = true;
+          }        
+      
           gameRFID(); // tweede game
         }
         else if(game1done == true && game2done == true && game3done == false && game4done == false && game5done == false){
           
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
-          lcd2.setCursor(0,1);
-          lcd2.print("Game 3: Hack");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("1:V 2:V 3:X 4:X 5:X");
-
+         if( loopGame3Once == false){
+              clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Game 3: Hack");
+              clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,2);
+              lcd2.print("1:V 2:V 3:X 4:X 5:X");
+              loopGame3Once = true;
+          }        
+          
           // deze is nog niet af
           // gameKeypadToetsen(); // derde game
           game3done = true; // moet uiteindelijk verwerkt worden in bovenstaande functie
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == false && game5done == false){
-          
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
-          lcd2.setCursor(0,1);
-          lcd2.print("Game 4: GITC start");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("1:V 2:V 3:V 4:X 5:X");
+
+         if( loopGame4Once == false){
+              clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Game 4: GITC start");
+              clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,2);
+              lcd2.print("1:V 2:V 3:V 4:X 5:X");
+              loopGame4Once = true;
+          }     
           
           gameKnoppen(); // vierde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == false){
-          
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
-          lcd2.setCursor(0,1);
-          lcd2.print("Game 5: NFI start");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("1:V 2:V 3:V 4:V 5:X");
+
+         if( loopGame5Once == false){
+              clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+              lcd2.setCursor(0,1);
+              lcd2.print("Game 5: NFI start");
+              clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+              lcd2.setCursor(0,2);
+              lcd2.print("1:V 2:V 3:V 4:V 5:X");
+              loopGame5Once = true;
+          }     
           
           gameKeypad(); // vijfde game
           //Serial.println("Gefeliciteerd alle games zijn succesvol uitgespeeld");
