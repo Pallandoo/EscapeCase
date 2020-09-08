@@ -22,17 +22,17 @@
 
 //change following according to the keypad
 const byte ROWS = 4; //four rows
-const byte COLS = 4; //three columns
-byte rowPins[ROWS] = {5, 4, 3, 2}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {19, 18, 17, 16}; //connect to the column pinouts of the keypad
+const byte COLS = 3; //three columns
+byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad
 
 //assign number to the each key as shwon in below. since I am using 4x4 keypad hence numbers are from 0 to 15.
 //MAKE SURE NUMBERING STARTS FROM 0 AND THERE IS NO NUMBERS ARE MISSING BETWEEN TWO NUMBERS!
 char keys[ROWS][COLS] = {
-    { 0,1,2,3 },
-    { 4,5,6,7 },
-    { 8,9,10,11 },
-    { 12,13,14,15 }
+    { 0,1,2 },
+    { 3,4,5 },
+    { 6,7,8 },
+    { 9,10,11 }
 };
 
 /*
@@ -41,32 +41,32 @@ char keys[ROWS][COLS] = {
  * 2) If you want to assign strings to keys then assign strings with '-' at the end for e.g. 'caps-small-no'
  * 3) If you want to assign both character and string then you can do it like 'A-a-hello-*-ok'. by adding '-' between characters and strings.
  */
-char* keyStringArray[20] = {
-  "1.*#", "2abcABC", "3defDEF", "caps-small-no-",
-  "4ghiGHI", "5jklJKL", "6mnoMNO", "up-",
-  "7pqrsPQRS", "8tuvTUV", "9wxyzWXYZ", "down-",
-  "left-", "0 ", "right-", "tare-"
+char* keyStringArray[12] = {
+  "1", "2abc", "3def",
+  "4ghi", "5jkl", "6mno",
+  "7prs", "8tuv", "9wxy", 
+  "*", "0 ", "#"
 };
 
 /*
  * if you want to assign long press button functionality to any button then assign function using following array.
  * make sure to assign to appropriate button.
  */
-char* longPressKeyStringArray[20] = {
-  "", "", "", "",
-  "", "", "", "",
-  "", "", "", "",
-  "cancel", "", "menu", "zero"
+char* longPressKeyStringArray[12] = {
+  "", "", "",
+  "", "", "",
+  "", "", "",
+  "cancel", "", "menu"
 };
 
 //999 to indicate end of array
-int alphaKeys[] = {1, 2, 4, 5, 6, 8, 9, 10, 999};  //add numbers of keys which are going to represent alphabet.
-int singlePressKeyButtons[] = {0, 1, 2, 4, 5, 6, 8, 9, 10, 13, 999};  //add numbers of keys which are going to cycle through characters
+int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
+int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
 int singlePressCmdButtons[] = {3, 7, 11, 12, 14, 15, 999}; //add numbers of keys which are going to cycle through strings
 int longPressCmdButtons[] = {12, 14, 15, 999};  //add numbers of characters which are going to have long press button functionality
 
 static byte kpadState;  //to store key state i.e. PRESSED, HOLD or RELEASED
-char textMode[10] = "no";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
+char textMode[10] = "small";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
 byte keyState = 0;  //0 = released, 1 = hold
 int textModeKey = 3; //assign textmode key number to this variable.
 char valueToSend[50] = {}; //it will store final value to send to the serial monitor.
@@ -77,7 +77,7 @@ unsigned long TimeInMillis;
 Keypad key_pad(makeKeymap(keys), rowPins, colPins, sizeof(rowPins), sizeof(colPins));
 
 //follwoing array will used to store the number of times the key is pressed which will help to cycle through characters or strings.
-int keyCounterArray[16] = {0};
+int keyCounterArray[12] = {0};
 
 void setup() {
   Serial.begin(9600);
