@@ -62,7 +62,7 @@ char* longPressKeyStringArray[12] = {
 //999 to indicate end of array
 int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
 int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
-int singlePressCmdButtons[] = {3, 7, 11, 12, 14, 15, 999}; //add numbers of keys which are going to cycle through strings
+int singlePressCmdButtons[] = {999}; //add numbers of keys which are going to cycle through strings
 int longPressCmdButtons[] = {12, 14, 15, 999};  //add numbers of characters which are going to have long press button functionality
 
 static byte kpadState;  //to store key state i.e. PRESSED, HOLD or RELEASED
