@@ -291,8 +291,8 @@ void loop() {
               lcd2.print("1:V 2:X 3:X 4:X 5:X");
               loopGame2Once = true;
           }        
-      
-          gameRFID(); // tweede game
+      game2done = true; 
+         // gameRFID(); // tweede game
         }
         else if(game1done == true && game2done == true && game3done == false && game4done == false && game5done == false){
           
@@ -321,8 +321,8 @@ void loop() {
               lcd2.print("1:V 2:V 3:V 4:X 5:X");
               loopGame4Once = true;
           }     
-          
-          gameKnoppen(); // vierde game
+          game4done = true; 
+          //gameKnoppen(); // vierde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == false){
 
@@ -343,6 +343,8 @@ void loop() {
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == true && loopfinishOnce == false){
           clearLCDLine(1, lcd2, 20); 
+          lcd2.setCursor(16,3);
+          lcd2.print(":"); 
           lcd2.setCursor(0,1);
           lcd2.print("Alle games zijn");
           clearLCDLine(2, lcd2, 20); 
@@ -848,6 +850,8 @@ void update_countdown(){
            lcd2.print("15 maart over "); // 14 karakters lang 
            lcd2.setCursor(14,3);
            lcd2.print(M);
+           lcd2.setCursor(16,3);
+           lcd2.print(":");
            lcd2.setCursor(17,3);
            lcd2.print(S); 
          }
