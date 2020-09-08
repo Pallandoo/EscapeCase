@@ -219,12 +219,12 @@ void loop() {
 
       // Ga elke seconde tellen zodat de countdown uiteindelijk goed uitgevoerd kan worden https://www.youtube.com/watch?v=BYKQ9rk0FEQ
       unsigned long huidigeTijd = millis();
-      if(huidigeTijd - vorigeTijd >= seconde && gameStart == true) {
+      if(huidigeTijd - vorigeTijd >= seconde && gameStart == true && loopfinishOnce == false) {
         update_countdown();
         vorigeTijd = huidigeTijd; 
       }
 
-      if(gameStart == true){
+      if(gameStart == true && loopfinishOnce == false){
         // if toevoegen voor wanneer de mensen het spel niet uitspelen. 
         //
         if(M == 0 && game5done == false){ // Het spel is niet uitgespeeld
@@ -342,38 +342,45 @@ void loop() {
           //toevoegen else if wanneer alle games klaar zijn waar de servo aangestuurd kan worden en tekst op het scherm komt en de timer pauzeert om de score te laten zien
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == true && loopfinishOnce == false){
-          clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
+          clearLCDLine(1, lcd2, 20); 
           lcd2.setCursor(0,1);
-          lcd2.print("Gefeliciteerd alle");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.print("Alle games zijn");
+          clearLCDLine(2, lcd2, 20); 
           lcd2.setCursor(0,2);
-          lcd2.print("zijn behaald!!!!!!");
+          lcd2.print("nu behaald!!!!!!");
           delay(5000); // 5 seconden delay blokkerend
+          clearLCDLine(1, lcd2, 20); 
           lcd2.setCursor(0,1);
           lcd2.print("De countdown");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          clearLCDLine(2, lcd2, 20); 
           lcd2.setCursor(0,2);
           lcd2.print("is gestopt");
           delay(5000); // 5 seconden delay blokkerend
-          lcd2.setCursor(0,1);
-          lcd2.print("De countdown");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
-          lcd2.setCursor(0,2);
-          lcd2.print("is gestopt");
-          delay(5000); // 5 seconden delay blokkerend
+//          clearLCDLine(1, lcd2, 20); 
+//          lcd2.setCursor(0,1);
+//          lcd2.print("De countdown");
+//          clearLCDLine(2, lcd2, 20); 
+//          lcd2.setCursor(0,2);
+//          lcd2.print("is gestopt");
+//          delay(5000); // 5 seconden delay blokkerend
           
           // functie voor het openen van de servo
           // openServo();
+          clearLCDLine(1, lcd2, 20); 
           lcd2.setCursor(0,1);
-          lcd2.print("Luik open teken de");
-          clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
+          lcd2.print("Luik open, teken de");
+          clearLCDLine(2, lcd2, 20); 
           lcd2.setCursor(0,2);
           lcd2.print("controleverklaring");
           delay(5000); // 5 seconden delay blokkerend
           
           // Pauzeer timer en laat mensen de tijd opschrijven
+          clearLCDLine(1, lcd2, 20); 
           lcd2.setCursor(0,1);
           lcd2.print("noteer de eindtijd");
+          clearLCDLine(2, lcd2, 20); 
+          lcd2.setCursor(0,2);
+          lcd2.print("Spel is klaar");
           loopfinishOnce = true;
         }
         else {
