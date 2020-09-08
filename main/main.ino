@@ -204,7 +204,7 @@ void initButtons() {
 void loop() {
       //Check of het spel al is begonnen
       mainSwitchState = digitalRead(mainSwitch);
-      if (mainSwitchState == LOW && gameStart == false && loopfinishOnce = false) //DIT MOET FALSE ZIJN
+      if (mainSwitchState == LOW && gameStart == false && loopfinishOnce == false) //DIT MOET FALSE ZIJN
       {   
          lcd2.clear();
          lcd2.setCursor(0,0);
@@ -341,7 +341,7 @@ void loop() {
           //luik open voor het tekenen van de controleverklaring -> servo aan
           //toevoegen else if wanneer alle games klaar zijn waar de servo aangestuurd kan worden en tekst op het scherm komt en de timer pauzeert om de score te laten zien
         }
-        else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == true && loopfinishOnce = false){
+        else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == true && loopfinishOnce == false){
           clearLCDLine(1, lcd2, 20); // wis alleen de 2 rij van het scherm
           lcd2.setCursor(0,1);
           lcd2.print("Gefeliciteerd alle");
