@@ -34,11 +34,12 @@ int mot_max = 180;  //Max servo angle
 LiquidCrystal_I2C lcd1(0x27,16,2); // <- Small LCD
 LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 // Display Lib END 
-///////////////////////////
+/////////////////////////// even kijken of het goed gaat met de twee keypad ff checken bij de test
 // Keypad 
 #include <String.h>
 
-String ingevuldeAntwoord = ""; // het laatst gevulde antwoord
+char ingevuldeAntwoord[50] = {}; // het laatst gevulde antwoord
+char antwoord[18] = "horen zien zeggen"; // global val
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -60,7 +61,7 @@ char* longPressKeyStringArray[12] = {
   "", "", "",
   "", "", "",
   "", "", "",
-  "cancel", "", "menu"
+  "cancel", "spatie", "menu"
 };
 int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
 int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
@@ -72,6 +73,7 @@ byte keyState = 0;  //0 = released, 1 = hold
 int textModeKey = 3; //assign textmode key number to this variable.
 char valueToSend[50] = {}; //it will store final value to send to the serial monitor.
 unsigned long TimeInMillis;
+int TimeDiffBtwnKeyPress = 1500;
 Keypad key_pad(makeKeymap(keys), rowPins, colPins, sizeof(rowPins), sizeof(colPins)); //initialize the keypad
 int keyCounterArray[12] = {0}; //follwoing array will used to store the number of times the key is pressed which will help to cycle through characters or strings.
 ///////////////////////////
@@ -172,17 +174,17 @@ char Master[Password_Lenght] = "123456"; //Keycode
 byte data_count = 0, master_count = 0;
 bool Pass_is_good;
 char customKey;
-const byte ROWS = 4; //four rows
-const byte COLS = 3; //three columns
-char keys[ROWS][COLS] = {
+//const byte ROWS = 4; //four rows
+//const byte COLS = 3; //three columns
+char keysNummers[ROWS][COLS] = {
   {'1','2','3'},
   {'4','5','6'},
   {'7','8','9'},
   {'*','0','#'}
 };
-byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
-Keypad customKeypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+//byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
+//byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad 
+Keypad customKeypad = Keypad( makeKeymap(keysNummers), rowPins, colPins, ROWS, COLS);
 bool door = true;
 // keypad vars END
 ////////////////////////////
@@ -403,13 +405,6 @@ void loop() {
           lcd2.setCursor(0,2);
           lcd2.print("is gestopt");
           delay(5000); // 5 seconden delay blokkerend
-//          clearLCDLine(1, lcd2, 20); 
-//          lcd2.setCursor(0,1);
-//          lcd2.print("De countdown");
-//          clearLCDLine(2, lcd2, 20); 
-//          lcd2.setCursor(0,2);
-//          lcd2.print("is gestopt");
-//          delay(5000); // 5 seconden delay blokkerend
           
           // functie voor het openen van de servo
           // openServo();
@@ -732,23 +727,49 @@ void initRFID(){
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
 /////////////////////////////////////// keypad tweede spel //////////////////////////////////
+
 void gameKeypadToetsen(){
     int val = key_pad.getKey();
-    //minimum time in milliseconds required between two key press to cycle through values
-    int TimeDiffBtwnKeyPress = 1500;
-    //String ingevuldeAntwoord = ""; // staat nu boven als global var
-    String antwoord = "horen zien zeggen"; // nog even kijken of dit het juiste antwoord was volgens de Game
-    
-    if( antwoord == ingevuldeAntwoord){ // het juiste antwoord is ingevuld
-      game3done = true;
-    }
+    // met de bovenstaande code hoort alles uitgevoerd te worden 
     
 }
 
-void stopKeyinAntwoord(String key){
-  // ingevuldeAntwoord =+ key; // zoiets 
-  // wanneer de er op cancel wordt gedrukt moeten de ingevulde antwoorden worden geresest
-  // bovenstaande nog te codere
+// de functie die eigenlijk alles doet
+void stopKeyinIngevuldeAntwoordEnCheck(char valueToSendLocal[50]){
+  int lengteAntwoordCharArray = 0;
+  int lengtevalueToSendCharArray = 0;
+
+  // bepaal lengte van ingevulde char
+  for(int i = 0; i < 50; ++i ){
+    if(antwoord[i] == '\0'){
+      lengteAntwoordCharArray = i;
+    }
+    if(valueToSendLocal[i] == '\0'){
+      lengteAntwoordCharArray = i;
+    }
+  }
+
+  // check of de waardes in de array overeenkomen met het volgende
+  if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'cancel') {
+      ingevuldeAntwoord[50] = {};
+     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'enter' ) {
+        // geef definitieve antwoord
+        if( ingevuldeAntwoord == antwoord ){ // controleer of het juiste antwoord is ingevuld
+          // print iets op LCD van spel behaald
+          game3done = true;
+        } else {
+          // print dat op lcd dat het antwoord niet goed is en start opnieuw
+          // reset chars 
+          ingevuldeAntwoord[50] = {};
+          valueToSend[50] = {};
+        }
+     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'spatie' ) {
+      ingevuldeAntwoord[lengteAntwoordCharArray-1] = ' '; //spatie invoegen
+      ingevuldeAntwoord[lengteAntwoordCharArray] = '\0'; // einde char opschuiven
+     } else {
+        ingevuldeAntwoord[lengteAntwoordCharArray] = valueToSendLocal[lengtevalueToSendCharArray-1]; // vul laatste letter in 
+        ingevuldeAntwoord[lengteAntwoordCharArray+1] = '\0'; // schuif de null character char array op 
+      }
 }
 
 //following function is used to cycle through characters
@@ -768,6 +789,7 @@ void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){
     keyCounterArray[keyVal] = 0;
   valueToSend[0] = subString[keyCounterArray[keyVal]];
   valueToSend[1] = '\0';
+  stopKeyinAntwoord(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -799,6 +821,7 @@ void getCommandFromKeyPress(int keyVal){
     i++; k++; j = 0;
   }
   strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
+  stopKeyinAntwoord(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -806,6 +829,7 @@ void getCommandFromKeyPress(int keyVal){
 void getCommandFormLongKeyPress(int keyVal){
   if(longPressKeyStringArray[keyVal] != ""){
     strcpy(valueToSend, longPressKeyStringArray[keyVal]);
+    stopKeyinAntwoord(valueToSend);
     Serial.println(valueToSend);
   }
 }
