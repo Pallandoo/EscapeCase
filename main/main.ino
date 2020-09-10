@@ -23,7 +23,7 @@ int mot_min = 90;   //min servo angle
 int mot_max = 180;  //Max servo angle
 
 ///////////////////////////
-// Keypad Lib 
+// Keypad Lib for numbers
 #include <Keypad.h>
 #define Password_Lenght 7 // 6 chars + NULL char (kepad puzzel)
 // Keypad Lib END 
@@ -34,7 +34,46 @@ int mot_max = 180;  //Max servo angle
 LiquidCrystal_I2C lcd1(0x27,16,2); // <- Small LCD
 LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 // Display Lib END 
+///////////////////////////
+// Keypad 
+#include <String.h>
 
+String ingevuldeAntwoord = ""; // het laatst gevulde antwoord
+
+const byte ROWS = 4; //four rows
+const byte COLS = 3; //three columns
+byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {2, 3, 4}; //connect to the column pinouts of the keypad
+char keys[ROWS][COLS] = {
+    { 0,1,2 },
+    { 3,4,5 },
+    { 6,7,8 },
+    { 9,10,11 }
+};
+char* keyStringArray[12] = {
+  "1", "2abc", "3def",
+  "4ghi", "5jkl", "6mno",
+  "7prs", "8tuv", "9wxy", 
+  "*", "0 ", "#"
+};
+char* longPressKeyStringArray[12] = {
+  "", "", "",
+  "", "", "",
+  "", "", "",
+  "cancel", "", "menu"
+};
+int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
+int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
+int singlePressCmdButtons[] = {999}; //add numbers of keys which are going to cycle through strings
+int longPressCmdButtons[] = {12, 14, 15, 999};  //add numbers of characters which are going to have long press button functionality
+static byte kpadState;  //to store key state i.e. PRESSED, HOLD or RELEASED
+char textMode[10] = "small";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
+byte keyState = 0;  //0 = released, 1 = hold
+int textModeKey = 3; //assign textmode key number to this variable.
+char valueToSend[50] = {}; //it will store final value to send to the serial monitor.
+unsigned long TimeInMillis;
+Keypad key_pad(makeKeymap(keys), rowPins, colPins, sizeof(rowPins), sizeof(colPins)); //initialize the keypad
+int keyCounterArray[12] = {0}; //follwoing array will used to store the number of times the key is pressed which will help to cycle through characters or strings.
 ///////////////////////////
 // RFID Lib 
 #include <SPI.h>
@@ -303,6 +342,12 @@ void loop() {
               clearLCDLine(2, lcd2, 20); // wis alleen de 3 rij van het scherm
               lcd2.setCursor(0,2);
               lcd2.print("1:V 2:V 3:X 4:X 5:X");
+              // initieer de keypad letters modes
+              key_pad.begin(makeKeymap(keys));
+              key_pad.addEventListener(keypadEvent);
+              //key_pad.setDebounceTime(100);
+              key_pad.setHoldTime(2000);
+              TimeInMillis = millis();
               loopGame3Once = true;
           }        
           
@@ -686,6 +731,134 @@ void initRFID(){
 
 //////////////////////////////////////// RFID Game         //////////////////////////////////
 
+/////////////////////////////////////// keypad tweede spel //////////////////////////////////
+void gameKeypadToetsen(){
+    int val = key_pad.getKey();
+    //minimum time in milliseconds required between two key press to cycle through values
+    int TimeDiffBtwnKeyPress = 1500;
+    //String ingevuldeAntwoord = ""; // staat nu boven als global var
+    String antwoord = "horen zien zeggen"; // nog even kijken of dit het juiste antwoord was volgens de Game
+    
+    if( antwoord == ingevuldeAntwoord){ // het juiste antwoord is ingevuld
+      game3done = true;
+    }
+    
+}
+
+void stopKeyinAntwoord(String key){
+  // ingevuldeAntwoord =+ key; // zoiets 
+  // wanneer de er op cancel wordt gedrukt moeten de ingevulde antwoorden worden geresest
+  // bovenstaande nog te codere
+}
+
+//following function is used to cycle through characters
+//startIndex and endIndex are used to cycle through particular part of character array. this is important because
+//in 'caps' text mode we only want to cycle through capital letters, in 'small' text mode we only want to cycle through small letters etc.
+void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){ 
+  char subString[50] = {};
+  strncpy(subString, keyStringArray[keyVal] + beginIndex, endIndex - beginIndex);
+
+  if((millis() - TimeInMillis) < TimeDiffBtwnKeyPress && strstr(subString, valueToSend) != NULL)
+      keyCounterArray[keyVal]++;
+  else{
+    keyCounterArray[keyVal] = 0;
+    TimeInMillis = millis();
+  }
+  if(keyCounterArray[keyVal] == strlen(subString))
+    keyCounterArray[keyVal] = 0;
+  valueToSend[0] = subString[keyCounterArray[keyVal]];
+  valueToSend[1] = '\0';
+  Serial.println(valueToSend);
+}
+
+//following function is used to cycle through strings
+void getCommandFromKeyPress(int keyVal){
+  int counterLimit = 0;
+  int i = 0, j = 0, k = 0;
+  while(keyStringArray[keyVal][i] != '\0'){
+    if(keyStringArray[keyVal][i] == '-')
+      counterLimit++;
+    i++;
+  }
+  if((millis() - TimeInMillis) < TimeDiffBtwnKeyPress && strstr(keyStringArray[keyVal], valueToSend) != NULL && valueToSend != "")
+      keyCounterArray[keyVal]++;
+  else{
+    keyCounterArray[keyVal] = 0;
+    TimeInMillis = millis();
+  }
+  if(keyCounterArray[keyVal] == counterLimit)
+    keyCounterArray[keyVal] = 0;
+   
+  i = 0, j = 0, k = 0;
+  char cmds[10][10] = {0};
+  while(keyStringArray[keyVal][k] != '\0'){
+    while(keyStringArray[keyVal][k] != '-'){
+      cmds[i][j] = keyStringArray[keyVal][k];
+      k++; j++;
+    }
+    i++; k++; j = 0;
+  }
+  strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
+  Serial.println(valueToSend);
+}
+
+//following function is used for long press functionality
+void getCommandFormLongKeyPress(int keyVal){
+  if(longPressKeyStringArray[keyVal] != ""){
+    strcpy(valueToSend, longPressKeyStringArray[keyVal]);
+    Serial.println(valueToSend);
+  }
+}
+
+void keypadEvent(KeypadEvent key){
+  kpadState = key_pad.getState();
+  int keyVal = key;
+  switch(kpadState){
+    case PRESSED:
+    break;
+
+    case HOLD:
+      if(isValueInArray(keyVal, longPressCmdButtons)){
+        keyState = 1;
+        getCommandFormLongKeyPress(keyVal);
+      }
+      break;
+
+    case RELEASED:
+      if(keyState == 1)
+        keyState = 0;
+       
+      else if(isValueInArray(keyVal, singlePressCmdButtons))
+        getCommandFromKeyPress(keyVal);
+     
+      //following part of code will use startIndex and endIndex of particular part of character array to cycle through on that much part.
+      else if(isValueInArray(keyVal, alphaKeys) && strcmp(textMode, "caps") == 0)
+        getKeyFromKeyPress(keyVal, (strlen(keyStringArray[keyVal])/2) + 1, strlen(keyStringArray[keyVal]));
+      else if(isValueInArray(keyVal, alphaKeys) && strcmp(textMode, "small") == 0)
+        getKeyFromKeyPress(keyVal, 1, strlen(keyStringArray[keyVal])/2 + 1);
+      else if(isValueInArray(keyVal, singlePressKeyButtons) && strcmp(textMode, "no") == 0)
+        getKeyFromKeyPress(keyVal, 0, 1);
+       
+      else if(isValueInArray(keyVal, singlePressKeyButtons))
+        getKeyFromKeyPress(keyVal, 0, strlen(keyStringArray[keyVal]));
+
+      if(keyVal == textModeKey)
+        strcpy(textMode, valueToSend);
+      break;
+  }
+}
+
+bool isValueInArray(int val, int *arr){
+    int i = 0;
+    while (arr[i] != 999) {
+        if (arr[i] == val)
+            return true;
+        i++;
+    }
+    return false;
+}
+/////////////////////////////////////// keypad tweede spel einde/////////////////////////////
+
 //////////////////////////////////////// Display and countdown /////////////////////////////
 
 void clearLCDLine(int line, LiquidCrystal_I2C LCD, int size){
@@ -693,13 +866,7 @@ void clearLCDLine(int line, LiquidCrystal_I2C LCD, int size){
    LCD.setCursor(n,line);
    LCD.print(" ");
  }
-// LCD.setCursor(0,line);             // set cursor in the beginning of deleted line
 }
-// voorbeeld code
-// clearLCDLine(4, lcd2, 20);
-// lcd2.print("Print iets hier ");
-
-
 
 int return_time_left() {
   return M;
@@ -754,30 +921,8 @@ void Open()
 void update_countdown(){
   if (gameStart = true && game5done == false){  
        S--;
-       //lcd2.clear();
        lcd2.setCursor(0,3);
        lcd2.print("15 maart over "); // 14 karakters lang 
-
-// onderste code verplaats zie andere if statements
-//       lcd2.setCursor(14,3);
-//       lcd2.print(M);
-//       lcd2.setCursor(16,3);
-//       lcd2.print(":");  
-//       lcd2.setCursor(17,3);
-//       lcd2.print(S); 
-       
-//    if(S<10) // Zie bestaande statement if(s>9){...}else{....}
-//    {
-//       lcd2.setCursor(14,3);
-//       lcd2.print(M);
-//       lcd2.setCursor(16,3);
-//       lcd2.print(":");  
-//       lcd2.setCursor(17,3);
-//       lcd2.print("0");
-//       lcd2.setCursor(18,3);
-//       lcd2.print(S); 
-//    }
-//  
   
     if(S<0)
      {
@@ -886,22 +1031,3 @@ void update_countdown(){
 }
 
 //////////////////////////////////////// END Display and countdown /////////////////////////////
-
-// oude code ////////////////////////////////////////////////////
-void start_game_escape_case() { // code in de main loop geplaatst
-//  mainSwitchState = digitalRead(mainSwitch);
-//  if (mainSwitchState == HIGH && gameStart == false) 
-//  {   
-//     Serial.println(mainSwitch);
-//     Serial.println("Turn the main switch to get started"); // Print "Button 1 pressed" on Serial Monitor
-//     gameStart = true; 
-//     delay(1000); // blokerende delay voor de arduino 
-//  } 
-}
-
-void normalModeOn () { // Nog oude code verweken in nieuew code
-//  digitalWrite(blueLed, LED_ON);  // Blue LED ON and ready to read card
-//  digitalWrite(redLed, LED_OFF);  // Make sure Red LED is off
-//  digitalWrite(greenLed, LED_OFF);  // Make sure Green LED is off
-//  //digitalWrite(relay, HIGH);    // Make sure Door is Locked
-}
