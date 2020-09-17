@@ -40,6 +40,7 @@ LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 
 char ingevuldeAntwoord[50] = {}; // het laatst gevulde antwoord
 char antwoord[18] = "horen zien zeggen"; // global val
+char stopKeyinAntwoord;
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -245,7 +246,7 @@ void initButtons() {
 void loop() {
       //Check of het spel al is begonnen
       mainSwitchState = digitalRead(mainSwitch);
-      if (mainSwitchState == LOW && gameStart == false && loopfinishOnce == false) //DIT MOET FALSE ZIJN
+      if (mainSwitchState == HIGH && gameStart == false && loopfinishOnce == false) //DIT MOET FALSE ZIJN
       {   
          lcd2.clear();
          lcd2.setCursor(0,0);
@@ -368,8 +369,8 @@ void loop() {
               lcd2.print("1:V 2:V 3:V 4:X 5:X");
               loopGame4Once = true;
           }     
-          game4done = true; 
-          //gameKnoppen(); // vierde game
+          //game4done = true; 
+          gameKnoppen(); // vierde game
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == true && game5done == false){
 
@@ -789,7 +790,7 @@ void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){
     keyCounterArray[keyVal] = 0;
   valueToSend[0] = subString[keyCounterArray[keyVal]];
   valueToSend[1] = '\0';
-  stopKeyinAntwoord(valueToSend);
+//  stopKeyinAntwoord(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -821,7 +822,7 @@ void getCommandFromKeyPress(int keyVal){
     i++; k++; j = 0;
   }
   strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
-  stopKeyinAntwoord(valueToSend);
+  //stopKeyinAntwoord(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -829,7 +830,7 @@ void getCommandFromKeyPress(int keyVal){
 void getCommandFormLongKeyPress(int keyVal){
   if(longPressKeyStringArray[keyVal] != ""){
     strcpy(valueToSend, longPressKeyStringArray[keyVal]);
-    stopKeyinAntwoord(valueToSend);
+    //stopKeyinAntwoord(valueToSend);
     Serial.println(valueToSend);
   }
 }
