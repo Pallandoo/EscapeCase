@@ -40,7 +40,7 @@ LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 
 char ingevuldeAntwoord[50] = {}; // het laatst gevulde antwoord
 char antwoord[18] = "horen zien zeggen"; // global val
-char stopKeyinAntwoord;
+//char stopKeyinAntwoord;
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -67,7 +67,7 @@ char* longPressKeyStringArray[12] = {
 int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
 int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
 int singlePressCmdButtons[] = {999}; //add numbers of keys which are going to cycle through strings
-int longPressCmdButtons[] = {12, 14, 15, 999};  //add numbers of characters which are going to have long press button functionality
+int longPressCmdButtons[] = {9, 10, 11, 999};  //add numbers of characters which are going to have long press button functionality
 static byte kpadState;  //to store key state i.e. PRESSED, HOLD or RELEASED
 char textMode[10] = "small";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
 byte keyState = 0;  //0 = released, 1 = hold
@@ -355,8 +355,8 @@ void loop() {
           }        
           
           // deze is nog niet af
-          // gameKeypadToetsen(); // derde game
-          game3done = true; // moet uiteindelijk verwerkt worden in bovenstaande functie
+           gameKeypadToetsen(); // derde game
+         // game3done = true; // moet uiteindelijk verwerkt worden in bovenstaande functie
         }
         else if(game1done == true && game2done == true && game3done == true && game4done == false && game5done == false){
 
@@ -767,9 +767,10 @@ void stopKeyinIngevuldeAntwoordEnCheck(char valueToSendLocal[50]){
      } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'spatie' ) {
       ingevuldeAntwoord[lengteAntwoordCharArray-1] = ' '; //spatie invoegen
       ingevuldeAntwoord[lengteAntwoordCharArray] = '\0'; // einde char opschuiven
-     } else {
+    } else {
         ingevuldeAntwoord[lengteAntwoordCharArray] = valueToSendLocal[lengtevalueToSendCharArray-1]; // vul laatste letter in 
         ingevuldeAntwoord[lengteAntwoordCharArray+1] = '\0'; // schuif de null character char array op 
+        //Serial.println(ingevuldeAntwoord[lengteAntwoordCharArray]);
       }
 }
 
@@ -790,7 +791,7 @@ void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){
     keyCounterArray[keyVal] = 0;
   valueToSend[0] = subString[keyCounterArray[keyVal]];
   valueToSend[1] = '\0';
-//  stopKeyinAntwoord(valueToSend);
+  stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -822,7 +823,7 @@ void getCommandFromKeyPress(int keyVal){
     i++; k++; j = 0;
   }
   strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
-  //stopKeyinAntwoord(valueToSend);
+  stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -830,7 +831,7 @@ void getCommandFromKeyPress(int keyVal){
 void getCommandFormLongKeyPress(int keyVal){
   if(longPressKeyStringArray[keyVal] != ""){
     strcpy(valueToSend, longPressKeyStringArray[keyVal]);
-    //stopKeyinAntwoord(valueToSend);
+    stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
     Serial.println(valueToSend);
   }
 }
