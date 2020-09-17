@@ -1,3 +1,4 @@
+  
 // Installing WIFI module in the ardiuno IDE: https://github.com/esp8266/Arduino#installing-with-boards-manager
 // All libraries needed to run this code 
 // #include <example-lib.h>
@@ -790,7 +791,7 @@ void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){
     keyCounterArray[keyVal] = 0;
   valueToSend[0] = subString[keyCounterArray[keyVal]];
   valueToSend[1] = '\0';
-//  stopKeyinAntwoord(valueToSend);
+  stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -822,7 +823,7 @@ void getCommandFromKeyPress(int keyVal){
     i++; k++; j = 0;
   }
   strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
-  //stopKeyinAntwoord(valueToSend);
+  stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
   Serial.println(valueToSend);
 }
 
@@ -830,7 +831,7 @@ void getCommandFromKeyPress(int keyVal){
 void getCommandFormLongKeyPress(int keyVal){
   if(longPressKeyStringArray[keyVal] != ""){
     strcpy(valueToSend, longPressKeyStringArray[keyVal]);
-    //stopKeyinAntwoord(valueToSend);
+    stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
     Serial.println(valueToSend);
   }
 }
