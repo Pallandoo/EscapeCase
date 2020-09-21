@@ -1,4 +1,3 @@
-  
 // Installing WIFI module in the ardiuno IDE: https://github.com/esp8266/Arduino#installing-with-boards-manager
 // All libraries needed to run this code 
 // #include <example-lib.h>
@@ -39,9 +38,10 @@ LiquidCrystal_I2C lcd2(0x26,20,4); // <- big LCD
 // Keypad 
 #include <String.h>
 
-char ingevuldeAntwoord[50] = {}; // het laatst gevulde antwoord
+//char ingevuldeAntwoord[50] = {}; // het laatst gevulde antwoord
 char antwoord[18] = "horen zien zeggen"; // global val
 //char stopKeyinAntwoord;
+char antwoordzin[50];
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -57,25 +57,25 @@ char* keyStringArray[12] = {
   "1", "2abc", "3def",
   "4ghi", "5jkl", "6mno",
   "7prs", "8tuv", "9wxy", 
-  "*", "0 ", "#"
+  "*", "0", "#"
 };
 char* longPressKeyStringArray[12] = {
   "", "", "",
   "", "", "",
   "", "", "",
-  "cancel", "spatie", "menu"
+  "cancel", "spatie", "enter"
 };
 int alphaKeys[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to represent alphabet.
 int singlePressKeyButtons[] = {1, 2, 3, 4, 5, 6, 7, 8, 999};  //add numbers of keys which are going to cycle through characters
 int singlePressCmdButtons[] = {999}; //add numbers of keys which are going to cycle through strings
 int longPressCmdButtons[] = {9, 10, 11, 999};  //add numbers of characters which are going to have long press button functionality
 static byte kpadState;  //to store key state i.e. PRESSED, HOLD or RELEASED
-char textMode[10] = "small";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
+char textMode[5] = "small";  //initial text mode, no = numbers, caps = capital alphabet, small = small alphabet
 byte keyState = 0;  //0 = released, 1 = hold
 int textModeKey = 3; //assign textmode key number to this variable.
 char valueToSend[50] = {}; //it will store final value to send to the serial monitor.
 unsigned long TimeInMillis;
-int TimeDiffBtwnKeyPress = 1500;
+int TimeDiffBtwnKeyPress = 10000;
 Keypad key_pad(makeKeymap(keys), rowPins, colPins, sizeof(rowPins), sizeof(colPins)); //initialize the keypad
 int keyCounterArray[12] = {0}; //follwoing array will used to store the number of times the key is pressed which will help to cycle through characters or strings.
 ///////////////////////////
@@ -209,10 +209,6 @@ void initKeypad() {
   lcd1.init();
   lcd1.backlight();
   lcd1.begin(16, 2);
-  lcd1.print(" Arduino Door");
-  lcd1.setCursor(0, 1);
-  lcd1.print("--Look project--");
-  delay(3000);
   lcd1.clear();
 }
 
@@ -738,41 +734,75 @@ void gameKeypadToetsen(){
 
 // de functie die eigenlijk alles doet
 void stopKeyinIngevuldeAntwoordEnCheck(char valueToSendLocal[50]){
-  int lengteAntwoordCharArray = 0;
-  int lengtevalueToSendCharArray = 0;
+ char input[50];
+ int antwoordLengte = strlen(valueToSendLocal);
+ 
+ strcpy(input, valueToSendLocal);
 
-  // bepaal lengte van ingevulde char
-  for(int i = 0; i < 50; ++i ){
-    if(antwoord[i] == '\0'){
-      lengteAntwoordCharArray = i;
-    }
-    if(valueToSendLocal[i] == '\0'){
-      lengteAntwoordCharArray = i;
-    }
-  }
-
-  // check of de waardes in de array overeenkomen met het volgende
-  if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'cancel') {
-      ingevuldeAntwoord[50] = {};
-     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'enter' ) {
-        // geef definitieve antwoord
-        if( ingevuldeAntwoord == antwoord ){ // controleer of het juiste antwoord is ingevuld
-          // print iets op LCD van spel behaald
-          game3done = true;
-        } else {
-          // print dat op lcd dat het antwoord niet goed is en start opnieuw
-          // reset chars 
-          ingevuldeAntwoord[50] = {};
-          valueToSend[50] = {};
-        }
-     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'spatie' ) {
-      ingevuldeAntwoord[lengteAntwoordCharArray-1] = ' '; //spatie invoegen
-      ingevuldeAntwoord[lengteAntwoordCharArray] = '\0'; // einde char opschuiven
-    } else {
-        ingevuldeAntwoord[lengteAntwoordCharArray] = valueToSendLocal[lengtevalueToSendCharArray-1]; // vul laatste letter in 
-        ingevuldeAntwoord[lengteAntwoordCharArray+1] = '\0'; // schuif de null character char array op 
-        //Serial.println(ingevuldeAntwoord[lengteAntwoordCharArray]);
+if (strlen(antwoordzin) < 20) {
+    if (strcmp(input, "enter") == 0){
+      if (antwoordzin == antwoord)
+      {
+        game3done = true;
+        //done met het spel 
       }
+      else
+      {
+      //helaas begin opnieuw
+        antwoordzin[0] = 0;
+        input[0] = 0;
+      }
+    }
+    if (strcmp(input, "cancel") == 0){
+        antwoordzin[0] = 0;
+        input[0] = 0;
+      }
+    if (strcmp(input, "spatie") == 0){
+        strcat(antwoordzin, " ");
+        input[0] = 0;
+        }
+    if (strlen(input) == 1) {
+        strcat(antwoordzin, input);
+        input[0] = 0;
+        Serial.println(antwoordzin);
+        }
+    }
+    else {
+      input[0] = 0;
+      antwoordzin[0] = 0;
+    }
+    
+   // bepaal lengte van ingevulde char
+//  for(int i = 0; i < 50; ++i ){
+//    if(antwoord[i] == '\0'){
+//      lengteAntwoordCharArray = i;
+//    }
+//    if(valueToSendLocal[i] == '\0'){
+//      lengteAntwoordCharArray = i;
+//    }
+//  }
+//
+//  // check of de waardes in de array overeenkomen met het volgende
+//  if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'cancel') {
+//      ingevuldeAntwoord[50] = {};
+//     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'enter' ) {
+//        // geef definitieve antwoord
+//        if( ingevuldeAntwoord == antwoord ){ // controleer of het juiste antwoord is ingevuld
+//          // print iets op LCD van spel behaald
+//          game3done = true;
+//        } else {
+//          // print dat op lcd dat het antwoord niet goed is en start opnieuw
+//          // reset chars 
+//          ingevuldeAntwoord[50] = {};
+//          valueToSend[50] = {};
+//        }
+//     } else if( valueToSendLocal[lengtevalueToSendCharArray-1] == 'spatie' ) {
+//      ingevuldeAntwoord[lengteAntwoordCharArray-1] = ' '; //spatie invoegen
+//      ingevuldeAntwoord[lengteAntwoordCharArray] = '\0'; // einde char opschuiven
+//     } else {
+//        ingevuldeAntwoord[lengteAntwoordCharArray] = valueToSendLocal[lengtevalueToSendCharArray-1]; // vul laatste letter in 
+//        ingevuldeAntwoord[lengteAntwoordCharArray+1] = '\0'; // schuif de null character char array op 
+//      }
 }
 
 //following function is used to cycle through characters
@@ -793,7 +823,7 @@ void getKeyFromKeyPress(int keyVal, int beginIndex, int endIndex){
   valueToSend[0] = subString[keyCounterArray[keyVal]];
   valueToSend[1] = '\0';
   stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
-  Serial.println(valueToSend);
+  //Serial.println(valueToSend);
 }
 
 //following function is used to cycle through strings
@@ -825,7 +855,7 @@ void getCommandFromKeyPress(int keyVal){
   }
   strcpy(valueToSend, cmds[keyCounterArray[keyVal]]);
   stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
-  Serial.println(valueToSend);
+  //Serial.println(valueToSend);
 }
 
 //following function is used for long press functionality
@@ -833,7 +863,7 @@ void getCommandFormLongKeyPress(int keyVal){
   if(longPressKeyStringArray[keyVal] != ""){
     strcpy(valueToSend, longPressKeyStringArray[keyVal]);
     stopKeyinIngevuldeAntwoordEnCheck(valueToSend);
-    Serial.println(valueToSend);
+    //Serial.println(valueToSend);
   }
 }
 
@@ -859,8 +889,8 @@ void keypadEvent(KeypadEvent key){
         getCommandFromKeyPress(keyVal);
      
       //following part of code will use startIndex and endIndex of particular part of character array to cycle through on that much part.
-      else if(isValueInArray(keyVal, alphaKeys) && strcmp(textMode, "caps") == 0)
-        getKeyFromKeyPress(keyVal, (strlen(keyStringArray[keyVal])/2) + 1, strlen(keyStringArray[keyVal]));
+//      else if(isValueInArray(keyVal, alphaKeys) && strcmp(textMode, "caps") == 0)
+//        getKeyFromKeyPress(keyVal, (strlen(keyStringArray[keyVal])/2) + 1, strlen(keyStringArray[keyVal]));
       else if(isValueInArray(keyVal, alphaKeys) && strcmp(textMode, "small") == 0)
         getKeyFromKeyPress(keyVal, 1, strlen(keyStringArray[keyVal])/2 + 1);
       else if(isValueInArray(keyVal, singlePressKeyButtons) && strcmp(textMode, "no") == 0)
@@ -871,6 +901,7 @@ void keypadEvent(KeypadEvent key){
 
       if(keyVal == textModeKey)
         strcpy(textMode, valueToSend);
+        //Serial.println(textMode);
       break;
   }
 }
